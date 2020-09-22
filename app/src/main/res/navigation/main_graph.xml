@@ -9,5 +9,14 @@
         android:id="@+id/categoryFragment"
         android:name="com.example.androiddevfaq.ui.category.CategoryFragment"
         android:label="fragment_category"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_category" >
+        <action
+            android:id="@+id/action_categoryFragment_to_questionListFragment"
+            app:destination="@id/questionListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionListFragment"
+        android:name="com.example.androiddevfaq.ui.questionlist.QuestionListFragment"
+        android:label="fragment_question_list"
+        tools:layout="@layout/fragment_question_list" />
 </navigation>

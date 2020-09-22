@@ -5,13 +5,15 @@ import com.example.androiddevfaq.databinding.ItemCategorySecondTypeBinding
 import com.example.androiddevfaq.ui.base.BaseAdapter
 import com.example.androiddevfaq.utils.mapper.AdapterMapper
 
-class CategoryAdapter() : BaseAdapter<CategoryHolders.CategoryBaseHolder>() {
+class CategoryAdapter(
+    private val listener: CategoryAdapterListener
+) : BaseAdapter<CategoryHolders.CategoryBaseHolder>() {
 //class CategoryAdapter() : RecyclerView.Adapter<CategoryHolders.CategoryBaseHolder>() {
 
-    private var categoryList = ArrayList<AdapterMapper.CategoryRecycler>()
+    private var categoryList = listOf<AdapterMapper.CategoryRecycler>()
 
     fun setList(newList: List<AdapterMapper.CategoryRecycler>) {
-        categoryList.addAll(newList)
+        categoryList = newList
         notifyDataSetChanged()
     }
 
@@ -31,6 +33,9 @@ class CategoryAdapter() : BaseAdapter<CategoryHolders.CategoryBaseHolder>() {
 
     override fun onBindViewHolder(holder: CategoryHolders.CategoryBaseHolder, position: Int) {
         holder.bind(categoryList[position].categoryName, categoryList[position].categorySize)
+        holder.binding.root.setOnClickListener {
+            listener.onCategoryClick(position)
+        }
     }
 
     override fun getItemCount() = categoryList.size

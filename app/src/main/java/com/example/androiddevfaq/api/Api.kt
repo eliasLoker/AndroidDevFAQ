@@ -6,5 +6,5 @@ interface Api {
 
     suspend fun getCategories(isError: Boolean = false, isEnableDelay: Boolean = true) : ResponseSrc.CategorySrc
 
-    suspend fun getQuestionList() : ResponseSrc.QuestionListSrc
+    suspend fun getQuestionListByID(categoryID: Int, isError: Boolean = false, isEnableDelay: Boolean = true) : ResponseSrc.QuestionListSrc
 }
