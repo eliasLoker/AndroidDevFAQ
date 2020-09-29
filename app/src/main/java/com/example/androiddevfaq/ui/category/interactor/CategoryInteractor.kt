@@ -10,7 +10,7 @@ class CategoryInteractor(
     private val api: Api
 ) {
 
-    suspend fun getCategories(): ResultWrapper<ResponseDstMapper.CategoryResponseDst> {
+    suspend fun getCategories(): ResultWrapper<ResponseDstMapper.CategoryDst> {
         return try {
             ResultWrapper.Success(api.getCategories().toCategoryResponseDst())
         } catch (e: Exception) {

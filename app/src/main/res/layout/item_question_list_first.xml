@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_rectangle"
+    android:layout_marginTop="5dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/item_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:text="Question"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_question"
+        tools:text="1250" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_drop_up_black"
+        app:layout_constraintEnd_toStartOf="@id/item_rating"
+        app:layout_constraintTop_toTopOf="@id/item_rating"
+        app:layout_constraintBottom_toBottomOf="@id/item_rating"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_drop_down"
+        app:layout_constraintTop_toTopOf="@id/item_rating"
+        app:layout_constraintBottom_toBottomOf="@id/item_rating"
+        app:layout_constraintStart_toEndOf="@id/item_rating"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,8 @@ class CategoryResponse {
         val id: Int?,
         val name: String?,
         val quantity: Int?,
-        val priority: Int?
+        val priority: Int?,
+        val logoPath: String?
     )
 
 }

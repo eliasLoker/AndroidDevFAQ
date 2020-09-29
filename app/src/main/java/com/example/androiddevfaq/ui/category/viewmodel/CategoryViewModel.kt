@@ -7,6 +7,8 @@ import com.example.androiddevfaq.ui.category.event.SetCategoryAdapterEvent
 
 interface CategoryViewModel : CategoryAdapterListener {
 
+    val initToolbar: LiveData<Any>
+
     val progressBarVisibility: LiveData<Boolean>
 
     val recyclerViewVisibility: LiveData<Boolean>
@@ -17,7 +19,13 @@ interface CategoryViewModel : CategoryAdapterListener {
 
     val goToNextFragmentEvents: LiveData<GoToNextFragmentEvents>
 
+    val initSortSpinner: LiveData<Any>
+
+    val sortSpinnerVisibility: LiveData<Boolean>
+
     fun onActivityCreated()
 
     fun onSwipeRefreshLayout()
+
+    fun onSortSpinnerItemSelected(position: Int)
 }

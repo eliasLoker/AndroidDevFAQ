@@ -5,6 +5,7 @@ class QuestionListResponse {
     data class QuestionListItemSrc(
         val id: Int?,
         val name: String?,
-        val priority: Int?
+        val priority: Int?,
+        val rating: Int?
     )
 }

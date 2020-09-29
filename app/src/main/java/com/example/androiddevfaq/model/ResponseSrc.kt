@@ -12,7 +12,21 @@ class ResponseSrc {
 
     data class QuestionListSrc(
         val status: Boolean?,
-        val questionList: List<QuestionListResponse.QuestionListItemSrc>,
+        val questionList: List<QuestionListResponse.QuestionListItemSrc>?,
+        val error: String?
+    )
+
+    data class QuestionSrc(
+        val status: Boolean?,
+        val title: String?,
+        val answer: String?,
+        val rating: Int?,
+        val error: String?
+    )
+
+    data class AddQuestionResponse(
+        val status: Boolean?,
+        val message: String?,
         val error: String?
     )
 }
