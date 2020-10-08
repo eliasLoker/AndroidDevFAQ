@@ -1,11 +1,11 @@
-package com.example.androiddevfaq.ui.addquestion.interactor
+package com.example.androiddevfaq.ui.test.interactor
 
 import com.example.androiddevfaq.api.Api
 import com.example.androiddevfaq.utils.ResultWrapper
 import com.example.androiddevfaq.utils.mapper.ResponseDstMapper
 import com.example.androiddevfaq.utils.mapper.ResponseDstMapper.Companion.toAddQuestionDst
 
-class AddQuestionInteractor(
+class TestInteractor(
     private var api: Api
 ) {
 

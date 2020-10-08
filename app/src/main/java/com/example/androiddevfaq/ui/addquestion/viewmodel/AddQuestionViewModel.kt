@@ -1,26 +1,113 @@
 package com.example.androiddevfaq.ui.addquestion.viewmodel
 
-import androidx.lifecycle.LiveData
-import com.example.androiddevfaq.ui.addquestion.event.SetErrorEvents
+import androidx.lifecycle.viewModelScope
+import com.example.androiddevfaq.base.BaseAction
+import com.example.androiddevfaq.base.BaseViewModel
+import com.example.androiddevfaq.base.BaseViewState
+import com.example.androiddevfaq.ui.addquestion.event.AddQuestionNavigationEvents
 import com.example.androiddevfaq.ui.addquestion.event.ShowAddResultDialogEvents
+import com.example.androiddevfaq.ui.addquestion.interactor.AddQuestionInteractor
+import com.example.androiddevfaq.utils.ResultWrapper
+import com.example.androiddevfaq.utils.SingleLiveEvent
+import kotlinx.coroutines.launch
 
-interface AddQuestionViewModel {
+class AddQuestionViewModel(
+    private val categoryID: Int,
+    private val categoryName: String,
+    private val addQuestionInteractor: AddQuestionInteractor
+) : BaseViewModel<AddQuestionViewModel.ViewState, AddQuestionViewModel.Action>(
+    ViewState()
+) {
 
-    val setToolbar: LiveData<String>
+    val navigationEvents = SingleLiveEvent<AddQuestionNavigationEvents>()
 
-    val setErrorEvents: LiveData<SetErrorEvents>
+    private var _question = ""
+    private var _answer = ""
 
-    val showAddResultDialogEvents: LiveData<ShowAddResultDialogEvents>
+    override fun onActivityCreated(isFirstLoading: Boolean) {
+        sendAction(Action.SetSubtitleToolbar(categoryName))
+        sendAction(Action.NotLoading)
+    }
 
-    val goToBack: LiveData<Any>
+    fun onQuestionTextChanged(question: String) {
+        _question = question
+    }
 
-    fun onActivityCreated()
 
-    fun onQuestionTextChanged(question: String)
+    fun onAnswerTextChanged(answer: String) {
+        _answer = answer
+    }
 
-    fun onAnswerTextChanged(answer: String)
+    fun onSendQuestionButtonClicked() {
+        makeRequestAddQuestion()
+    }
 
-    fun onSendQuestionButtonClicked()
+    fun onDialogPositiveButtonsClicked() {
+        navigationEvents.value = AddQuestionNavigationEvents.GoToBack
+    }
 
-    fun onDialogPositiveButtonClicked()
+    private fun makeRequestAddQuestion() {
+        sendAction(Action.Loading)
+        viewModelScope.launch {
+            when(val addQuestion = addQuestionInteractor.addQuestion(
+                categoryID, _question, _answer
+            )) {
+                is ResultWrapper.Success -> {
+                    when(addQuestion.data.status) {
+                        true -> {
+                            val event = AddQuestionNavigationEvents.ShowSuccessDialog(addQuestion.data.message)
+                            navigationEvents.value = event
+                        }
+                        false -> {
+                            val event = AddQuestionNavigationEvents.ShowSuccessDialog(addQuestion.data.error)
+                            navigationEvents.value = event
+                        }
+                    }
+                    sendAction(Action.NotLoading)
+                }
+
+                is ResultWrapper.Error -> {
+                    sendAction(Action.NotLoading)
+                    val event = AddQuestionNavigationEvents.ShowErrorDialog
+                    navigationEvents.value = event
+                }
+            }
+        }
+    }
+
+    override fun onReduceState(viewAction: Action) = when(viewAction) {
+        is Action.SetSubtitleToolbar -> state.copy(
+            subtitleText = viewAction.categoryName
+        )
+        is Action.Loading -> state.copy(
+            progressBarVisibility = true,
+            questionEditTextVisibility = false,
+            answerEditTextVisibility= false,
+            sendQuestionButtonVisibility = false
+        )
+
+        is Action.NotLoading -> state.copy(
+            progressBarVisibility = false,
+            questionEditTextVisibility = true,
+            answerEditTextVisibility= true,
+            sendQuestionButtonVisibility = true
+        )
+    }
+
+    data class ViewState(
+        val progressBarVisibility: Boolean = true,
+        val questionEditTextVisibility: Boolean = false,
+        val answerEditTextVisibility: Boolean = false,
+        val sendQuestionButtonVisibility: Boolean = false,
+        val subtitleText: String = ""
+    ) : BaseViewState
+
+    sealed class Action : BaseAction {
+
+        class SetSubtitleToolbar(val categoryName: String) : Action()
+
+        object Loading : Action()
+
+        object NotLoading: Action()
+    }
 }

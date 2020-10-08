@@ -1,4 +1,4 @@
-package com.example.androiddevfaq.ui.base
+package com.example.androiddevfaq.base
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

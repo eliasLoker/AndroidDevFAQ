@@ -1,16 +1,11 @@
 package com.example.androiddevfaq.ui.question
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.androiddevfaq.App
 import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.FragmentQuestionBinding
-import com.example.androiddevfaq.ui.base.BaseFragment
+import com.example.androiddevfaq.base.BaseFragment
 import com.example.androiddevfaq.ui.question.interactor.QuestionInteractor
 import com.example.androiddevfaq.ui.question.viewmodel.QuestionFactory
 import com.example.androiddevfaq.ui.question.viewmodel.QuestionViewModel

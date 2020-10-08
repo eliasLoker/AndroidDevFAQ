@@ -2,26 +2,37 @@ package com.example.androiddevfaq.ui.addquestion
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
+import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import com.example.androiddevfaq.App
 import com.example.androiddevfaq.R
-import com.example.androiddevfaq.api.FakeApiImpl
+import com.example.androiddevfaq.base.BaseFragment
+import com.example.androiddevfaq.base.observe
 import com.example.androiddevfaq.databinding.FragmentAddQuestionBinding
-import com.example.androiddevfaq.ui.addquestion.event.ShowAddResultDialogEvents
+import com.example.androiddevfaq.ui.addquestion.event.AddQuestionNavigationEvents
 import com.example.androiddevfaq.ui.addquestion.interactor.AddQuestionInteractor
 import com.example.androiddevfaq.ui.addquestion.viewmodel.AddQuestionFactory
 import com.example.androiddevfaq.ui.addquestion.viewmodel.AddQuestionViewModel
-import com.example.androiddevfaq.ui.addquestion.viewmodel.AddQuestionViewModelImpl
-import com.example.androiddevfaq.ui.base.BaseFragment
 import com.example.androiddevfaq.utils.onTextChanged
+import com.example.androiddevfaq.utils.popBackStack
 
 class AddQuestionFragment(
     layoutID: Int = R.layout.fragment_add_question
 ) : BaseFragment<FragmentAddQuestionBinding>(layoutID, FragmentAddQuestionBinding::inflate) {
 
     private lateinit var addQuestionViewModel: AddQuestionViewModel
+
+    private val stateObserver = Observer<AddQuestionViewModel.ViewState> {
+        binding.answerInputLayout.isVisible = it.answerEditTextVisibility
+        binding.questionInputLayout.isVisible = it.questionEditTextVisibility
+        binding.sendQuestionButton.isVisible = it.sendQuestionButtonVisibility
+        binding.progressBar.isVisible = it.progressBarVisibility
+        binding.createQuestionToolbar.toolbar.apply {
+            title = "Добавить вопрос"
+            subtitle = it.subtitleText
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -31,10 +42,17 @@ class AddQuestionFragment(
         val factory = AddQuestionFactory(categoryID, categoryName, interactor)
         addQuestionViewModel = ViewModelProviders
             .of(this, factory)
-            .get(AddQuestionViewModelImpl::class.java)
-        addQuestionViewModel.onActivityCreated()
+            .get(AddQuestionViewModel::class.java)
+        observe(addQuestionViewModel.stateLiveData, stateObserver)
         initListeners()
-        initObservers()
+        addQuestionViewModel.onActivityCreated(savedInstanceState == null)
+        addQuestionViewModel.navigationEvents.observe(viewLifecycleOwner, {
+            when(it) {
+                is AddQuestionNavigationEvents.ShowSuccessDialog -> showSuccessDialog(it.message)
+                is AddQuestionNavigationEvents.ShowFailureDialog -> showErrorDialog(it.failureMessage)
+                is AddQuestionNavigationEvents.GoToBack -> popBackStack()
+            }
+        })
     }
 
     private fun initListeners() {
@@ -51,47 +69,28 @@ class AddQuestionFragment(
         }
     }
 
-    private fun initObservers() {
-        addQuestionViewModel.setToolbar.observe(viewLifecycleOwner, {
-            binding.createQuestionToolbar.toolbar.apply {
-                title = it
-                subtitle = "Добавить вопрос"
-            }
-        })
-
-        addQuestionViewModel.showAddResultDialogEvents.observe(viewLifecycleOwner, {
-            when (it) {
-                is ShowAddResultDialogEvents.Success -> showSuccessDialog(it.message)
-
-                is ShowAddResultDialogEvents.Error -> showErrorDialog(it.errorMessage)
-            }
-        })
-
-        addQuestionViewModel.goToBack.observe(viewLifecycleOwner, {
-            findNavController().popBackStack()
-        })
-    }
-
-    private fun showSuccessDialog(message: String) {
+    private fun showSuccessDialog(message: String?) {
+        val finalMessage = message ?: "Вопрос успешно отправлен"
         val dialog = AlertDialog.Builder(context)
             .setTitle("Вопрос добавлен!")
-            .setMessage(message)
+            .setMessage(finalMessage)
             .setCancelable(false)
             .setPositiveButton("Ok") { i1, _ ->
                 i1.dismiss()
-                addQuestionViewModel.onDialogPositiveButtonClicked()
+                addQuestionViewModel.onDialogPositiveButtonsClicked()
             }
         dialog.show()
     }
 
-    private fun showErrorDialog(message: String) {
+    private fun showErrorDialog(message: String?) {
+        val finalMessage = message ?: "Не удалось добавить"
         val dialog = AlertDialog.Builder(context)
             .setTitle("Вопрос не добавлен!")
-            .setMessage(message)
+            .setMessage(finalMessage)
             .setCancelable(false)
             .setPositiveButton("Ok") { i1, _ ->
                 i1.dismiss()
-                addQuestionViewModel.onDialogPositiveButtonClicked()
+                addQuestionViewModel.onDialogPositiveButtonsClicked()
             }
         dialog.show()
     }

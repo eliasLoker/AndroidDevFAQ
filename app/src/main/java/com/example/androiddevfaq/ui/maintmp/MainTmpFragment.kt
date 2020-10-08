@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.FragmentMainTmpBinding
-import com.example.androiddevfaq.ui.base.BaseFragment
+import com.example.androiddevfaq.base.BaseFragment
+import com.example.androiddevfaq.utils.navigate
 
 class MainTmpFragment(
     layoutID: Int = R.layout.fragment_main_tmp
@@ -13,11 +14,13 @@ class MainTmpFragment(
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding.goToCategoriesButton.setOnClickListener {
-            findNavController().navigate(R.id.action_mainTmpFragment_to_categoryFragment)
+//            findNavController().navigate(R.id.action_mainTmpFragment_to_categoryFragmentNew)
+            navigate(R.id.action_mainTmpFragment_to_categoryFragmentNew)
         }
 
         binding.goToFavourites.setOnClickListener {
-            findNavController().navigate(R.id.action_mainTmpFragment_to_favouritesFragment)
+//            findNavController().navigate(R.id.action_mainTmpFragment_to_addQuestionFragment)
+            navigate(R.id.action_mainTmpFragment_to_addQuestionFragment)
         }
     }
 }

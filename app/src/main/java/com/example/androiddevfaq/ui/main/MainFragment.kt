@@ -1,14 +1,9 @@
 package com.example.androiddevfaq.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.FragmentMainBinding
-import com.example.androiddevfaq.ui.base.BaseFragment
-import com.google.android.material.tabs.TabLayout
+import com.example.androiddevfaq.base.BaseFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainFragment(

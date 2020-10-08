@@ -7,7 +7,8 @@ class CategoryResponse {
         val name: String?,
         val quantity: Int?,
         val priority: Int?,
-        val logoPath: String?
+        val logoPath: String?,
+        val lastQuestionDate: String?
     )
 
 }

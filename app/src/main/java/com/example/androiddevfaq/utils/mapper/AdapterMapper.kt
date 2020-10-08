@@ -1,7 +1,10 @@
 package com.example.androiddevfaq.utils.mapper
 
+import android.util.Log
 import com.example.androiddevfaq.model.CategoryResponse
 import com.example.androiddevfaq.model.QuestionListResponse
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AdapterMapper {
 
@@ -12,14 +15,17 @@ class AdapterMapper {
         val titleSize: String,
         val priority: Int,
         val recyclerType: Int,
-        val logoPath: String
+        val logoPath: String,
+        val lastQuestionDate: String
     )
 
     data class QuestionItemRecycler(
         val questionID: Int,
         val name: String,
         val recyclerType: Int,
-        val rating: Int
+        val rating: Int,
+        val date: String,
+        val timestamp: Long
     )
 
     companion object {
@@ -32,7 +38,8 @@ class AdapterMapper {
             titleSize = "Вопросов в категории: ${quantity ?: 0}",
             recyclerType = recyclerType,
             priority = priority ?: 0,
-            logoPath = logoPath ?: ""
+            logoPath = logoPath ?: "",
+            lastQuestionDate = lastQuestionDate ?: ""
         )
 
         @JvmStatic
@@ -46,7 +53,19 @@ class AdapterMapper {
             questionID = id ?: 0,
             name = name ?: "",
             recyclerType = recyclerType,
-            rating = rating ?: 0
+            rating = rating ?: 0,
+            date = parseTimestampToDate(timestamp ?: 0),
+            timestamp = timestamp ?: 0
         )
+
+//        fun parseTimestampToDate(timestamp: Long) : String {
+//            Log.d("DateDebug", "TS PARSE: $timestamp")
+//            val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
+//            val date = Date(timestamp * 1000)
+//            return simpleDateFormat.format(date)
+//        }
+
+        fun parseTimestampToDate(timestamp: Long)
+                = SimpleDateFormat("dd-MM-yyyy HH:mm").format(Date(timestamp * 1000))
     }
 }

@@ -1,13 +1,12 @@
 package com.example.androiddevfaq.ui.category.adapter
 
 import android.net.Uri
-import android.util.Log
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.ItemCategoryFirstTypeBinding
 import com.example.androiddevfaq.databinding.ItemCategorySecondTypeBinding
-import com.example.androiddevfaq.ui.base.BaseAdapter
+import com.example.androiddevfaq.base.BaseAdapter
 import com.example.androiddevfaq.utils.mapper.AdapterMapper
 
 class CategoryAdapter(
@@ -40,8 +39,7 @@ class CategoryAdapter(
         categoryHolder: CategoryHolders.BaseCategoryHolder,
         position: Int
     ) {
-        categoryHolder.bind(categoryList[position].categoryName, categoryList[position].titleSize)
-        Log.d("AdapterDebug", "Pic: ${categoryList[position].logoPath}")
+        categoryHolder.bind(categoryList[position].categoryName, categoryList[position].titleSize, categoryList[position].lastQuestionDate)
         Glide.with(categoryHolder.itemView.context)
             .load(Uri.parse("file:///android_asset/${categoryList[position].logoPath}"))
             .placeholder(R.drawable.shape_rectangle_categories_adapter)

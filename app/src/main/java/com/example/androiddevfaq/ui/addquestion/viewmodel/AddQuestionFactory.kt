@@ -11,6 +11,6 @@ class AddQuestionFactory(
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return AddQuestionViewModelImpl(categoryID, categoryName, addQuestionInteractor) as T
+        return AddQuestionViewModel(categoryID, categoryName, addQuestionInteractor) as T
     }
 }

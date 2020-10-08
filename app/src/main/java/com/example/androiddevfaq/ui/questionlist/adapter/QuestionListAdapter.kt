@@ -1,12 +1,11 @@
 package com.example.androiddevfaq.ui.questionlist.adapter
 
+import android.util.Log
 import android.view.ViewGroup
-import com.example.androiddevfaq.databinding.ItemCategorySecondTypeBinding
 import com.example.androiddevfaq.databinding.ItemQuestionListFirstBinding
 import com.example.androiddevfaq.databinding.ItemQuestionListSecondBinding
-import com.example.androiddevfaq.ui.base.BaseAdapter
+import com.example.androiddevfaq.base.BaseAdapter
 import com.example.androiddevfaq.utils.mapper.AdapterMapper
-import com.example.androiddevfaq.utils.mapper.ResponseDstMapper
 
 class QuestionListAdapter(
     private val questionListListener: QuestionListListener
@@ -16,6 +15,7 @@ class QuestionListAdapter(
 
     fun setData(newList: List<AdapterMapper.QuestionItemRecycler>) {
         questionList = newList
+        Log.d("ActionDebug", "RV: $newList")
         notifyDataSetChanged()
     }
 
@@ -33,7 +33,8 @@ class QuestionListAdapter(
         holder: QuestionListHolders.BaseQuestionListHolder,
         position: Int
     ) {
-        holder.bind(questionList[position].name, questionList[position].rating)
+        holder.bind(questionList[position].name, questionList[position].date, questionList[position].rating)
+//        holder.bind2(questionList[position].name, questionList[position].rating)
         holder.itemView.setOnClickListener {
             questionListListener.onClick(position)
         }

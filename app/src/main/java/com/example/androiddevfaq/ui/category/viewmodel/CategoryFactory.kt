@@ -9,6 +9,6 @@ class CategoryFactory(
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return CategoryViewModelImpl(categoryInteractor) as T
+        return CategoryViewModel(categoryInteractor) as T
     }
 }

@@ -32,4 +32,15 @@
         app:layout_constraintEnd_toEndOf="@id/go_to_categories_button"
         app:layout_constraintTop_toBottomOf="@id/go_to_categories_button"/>
 
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="test"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="@id/go_to_favourites"
+        app:layout_constraintEnd_toEndOf="@id/go_to_favourites"
+        app:layout_constraintTop_toBottomOf="@id/go_to_favourites"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ class QuestionListResponse {
         val id: Int?,
         val name: String?,
         val priority: Int?,
-        val rating: Int?
+        val rating: Int?,
+        val timestamp: Long?
     )
 }

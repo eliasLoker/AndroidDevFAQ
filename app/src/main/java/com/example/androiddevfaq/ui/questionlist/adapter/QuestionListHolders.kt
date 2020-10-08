@@ -14,7 +14,15 @@ class QuestionListHolders {
 
         abstract val ratingTextView: TextView
 
-        abstract fun bind(questionText: String, rating: Int)
+        abstract val dateTextView: TextView
+
+//        abstract fun bind2(questionText: String, rating: Int)
+
+        fun bind(questionText: String, date: String, rating: Int) {
+            questionTextView.text = questionText
+            ratingTextView.text = "$rating"
+            dateTextView.text = date
+        }
     }
 
     class FirstTypeItem(binding: ItemQuestionListFirstBinding) : BaseQuestionListHolder(binding) {
@@ -22,13 +30,15 @@ class QuestionListHolders {
 
         override val ratingTextView = binding.itemRating
 
+        override val dateTextView = binding.dateTextView
+
         //        override fun bind(questionText: String) {
 //            questionTextView.text = questionText
 //        }
-        override fun bind(questionText: String, rating: Int) {
-            questionTextView.text = questionText
-            ratingTextView.text = "$rating"
-        }
+//        override fun bind2(questionText: String, rating: Int) {
+//            questionTextView.text = questionText
+//            ratingTextView.text = "$rating"
+//        }
     }
 
     class SecondTypeItem(binding: ItemQuestionListSecondBinding) : BaseQuestionListHolder(binding) {
@@ -36,14 +46,16 @@ class QuestionListHolders {
 
         override val ratingTextView = binding.itemRating
 
+        override val dateTextView = binding.dateTextView
+
 //        override fun bind(questionText: String) {
 //            questionTextView.text = questionText
 //        }
 
-        override fun bind(questionText: String, rating: Int) {
-            questionTextView.text = questionText
-            ratingTextView.text = "$rating"
-        }
+//        override fun bind2(questionText: String, rating: Int) {
+//            questionTextView.text = questionText
+//            ratingTextView.text = "$rating"
+//        }
     }
 
 }

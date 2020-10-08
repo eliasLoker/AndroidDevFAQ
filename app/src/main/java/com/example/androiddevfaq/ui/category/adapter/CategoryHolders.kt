@@ -9,13 +9,19 @@ import com.example.androiddevfaq.databinding.ItemCategorySecondTypeBinding
 
 class CategoryHolders {
 
-    abstract class BaseCategoryHolder(val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    abstract class BaseCategoryHolder(val binding: ViewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         abstract val categoryNameTextView: TextView
         abstract val categorySizeTextView: TextView
         abstract val categoryLogo: ImageView
+        abstract val categoryLastQuestionDate: TextView
 
-        abstract fun bind(categoryName: String, categorySize: String)
+        fun bind(categoryName: String, categorySize: String, categoryLastQuestion: String) {
+            categoryNameTextView.text = categoryName
+            categorySizeTextView.text = categorySize
+            categoryLastQuestionDate.text = categoryLastQuestion
+        }
     }
 
     class FirstTypeItem(binding: ItemCategoryFirstTypeBinding) : BaseCategoryHolder(binding) {
@@ -23,11 +29,7 @@ class CategoryHolders {
         override val categoryNameTextView = binding.itemCategoryName
         override val categorySizeTextView = binding.itemCategorySize
         override val categoryLogo = binding.itemCategoryImageView
-
-        override fun bind(categoryName: String, categorySize: String) {
-            categoryNameTextView.text = categoryName
-            categorySizeTextView.text = categorySize
-        }
+        override val categoryLastQuestionDate = binding.lastQuestionDate
     }
 
     class SecondTypeItem(binding: ItemCategorySecondTypeBinding) : BaseCategoryHolder(binding) {
@@ -35,10 +37,6 @@ class CategoryHolders {
         override val categoryNameTextView = binding.itemCategoryName
         override val categorySizeTextView = binding.itemCategorySize
         override val categoryLogo = binding.itemCategoryImageView
-
-        override fun bind(categoryName: String, categorySize: String) {
-            categoryNameTextView.text = categoryName
-            categorySizeTextView.text = categorySize
-        }
+        override val categoryLastQuestionDate = binding.lastQuestionDate
     }
 }

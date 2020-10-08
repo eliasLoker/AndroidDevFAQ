@@ -22,12 +22,24 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/date_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textStyle="italic"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="@id/item_question"
+        app:layout_constraintEnd_toEndOf="@id/item_question"
+        app:layout_constraintTop_toBottomOf="@id/item_question"
+        tools:text="05.05.2015"/>
+
+    <TextView
         android:id="@+id/item_rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_question"
+        app:layout_constraintTop_toBottomOf="@id/date_text_view"
         tools:text="1250" />
 
     <ImageView

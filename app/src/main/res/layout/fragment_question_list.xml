@@ -10,6 +10,23 @@
         android:id="@+id/question_list_toolbar"
         layout="@layout/toolbar_question_list"/>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <Spinner
+        android:id="@+id/sort_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@id/vertical_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/question_list_toolbar"/>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/question_list_swipe_refresh_layout"
         android:layout_width="0dp"
@@ -17,11 +34,11 @@
         android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/question_list_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/sort_spinner"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/quesion_list_recycler"
+            android:id="@+id/question_list_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_question_list_first"/>

@@ -1,9 +1,15 @@
 package com.example.androiddevfaq.api
 
+import android.util.Log
 import com.example.androiddevfaq.model.CategoryResponse
 import com.example.androiddevfaq.model.QuestionListResponse
 import com.example.androiddevfaq.model.ResponseSrc
+import com.example.androiddevfaq.utils.mapper.AdapterMapper
 import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class FakeApiImpl private constructor(
     private val delay: Long?
@@ -21,6 +27,7 @@ class FakeApiImpl private constructor(
         isError: Boolean
     ): ResponseSrc.CategorySrc {
         delay(delay ?: 0)
+//        test()
         when (isError) {
             true -> throw NoSuchFieldException("Parsing error")
             false -> {
@@ -32,6 +39,26 @@ class FakeApiImpl private constructor(
                 return ResponseSrc.CategorySrc(true, categoriesResponse, null)
             }
         }
+    }
+
+    private fun test() {
+        val currentCalendar = Calendar.getInstance()
+        val newCalendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, (2018..2020).random())
+            set(Calendar.MONTH, (0..11).random())
+            set(Calendar.DAY_OF_MONTH, (1..28).random())
+            set(Calendar.HOUR_OF_DAY, (0..24).random())
+            set(Calendar.MINUTE, (0..60).random())
+        }
+        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
+        Log.d("DateDebug", "Cal: $newCalendar")
+        val userDate = simpleDateFormat.format(newCalendar.time)
+        Log.d("DateDebug", "CalForm: $userDate")
+        Log.d("DateDebug", "Stamp / 1000: ${newCalendar.timeInMillis}")
+        Log.d("DateDebug", "Stamp: ${newCalendar.timeInMillis / 1000}")
+//        val newCalendar = Calendar.getInstance()
+//        newCalendar.set(Calendar.MONTH, (0..11).random())
+//        newCalendar.set(Calendar.DAY_OF_MONTH, (1..28).random())
     }
 
     override suspend fun getQuestionListByID(
@@ -94,15 +121,20 @@ class FakeApiImpl private constructor(
                 val categoryKeys = categories.keys
                 for (i in categoryKeys) {
                     if (categoryID == i.id) {
-                        var questionsList = categories[i]!! as ArrayList
-                        val question = Question(
+                        val questionsList = categories[i]!! as ArrayList
+//                        val question = Question(
+//                            111,
+//                            question,
+//                            answer,
+//                            (10..500).random(),
+//                            getQuestionRandomTimeStamp()
+//                        )
+                        val questionItem = createQuestion(
                             111,
                             question,
-                            answer,
-                            500
-                            //TODO(Hardcode rating)
+                            answer
                         )
-                        questionsList.add(question)
+                        questionsList.add(questionItem)
                         return ResponseSrc.AddQuestionResponse(
                             true,
                             "Вопрос успешно добавлен",
@@ -127,61 +159,66 @@ class FakeApiImpl private constructor(
                     "Также существует вероятность того, что это приведет к утечке памяти, так как AsyncTask поддерживает ссылку на Activity, что предотвращает сбор мусора, пока AsyncTask остается в живых.\n" +
                     "По этим причинам использование AsyncTasks для длительных фоновых задач, как правило – плохая идея. Для них должен использоваться другой механизм (например, служба)."
 
-        val firstCategory =
-            Category(
-                0,
-                "Java",
-                getFirstCategoryQuestions().size,
-                2,
-                "java_logo.png"
-            )
         val firstCatQuestions = getFirstCategoryQuestions()
+        val maxTimestampFirst = firstCatQuestions.maxOf { it.timestamp }
+        val firstCategory = createCategory(
+            0,
+            "Java",
+            getFirstCategoryQuestions().size,
+            2,
+            "java_logo.png",
+            maxTimestampFirst
+        )
+
         categories[firstCategory] = firstCatQuestions
 
-        val secondCategory =
-            Category(
-                1,
-                "Kotlin",
-                getSecondCategoryQuestions().size,
-                0,
-                "kotlin_logo.png"
-            )
         val secondCatQuestions = getSecondCategoryQuestions()
+        val maxTimestampSecond = secondCatQuestions.maxOf { it.timestamp }
+        val secondCategory = createCategory(
+            1,
+            "Kotlin",
+            getSecondCategoryQuestions().size,
+            0,
+            "kotlin_logo.png",
+            maxTimestampSecond
+        )
         categories[secondCategory] = secondCatQuestions
 
-        val thirdCategory =
-            Category(
-                2,
-                "Android",
-                getThirdCategoryQuestions().size,
-                3,
-                "android_logo.jpg"
-            )
         val thirdCatQuestions = getThirdCategoryQuestions()
+        val maxTimestampThird = secondCatQuestions.maxOf { it.timestamp }
+        val thirdCategory = createCategory(
+            2,
+            "Android",
+            getThirdCategoryQuestions().size,
+            3,
+            "android_logo.jpg",
+            maxTimestampThird
+        )
         categories[thirdCategory] = thirdCatQuestions
 
-        val fourthCategory =
-            Category(
-                3,
-                "Логические задачи",
-                getFourthCategoryQuestions().size,
-                1,
-                "brain_logo.png"
-            )
         val fourthCatQuestions = getFourthCategoryQuestions()
+        val maxTimestampFourth = secondCatQuestions.maxOf { it.timestamp }
+        val fourthCategory = createCategory(
+            3,
+            "Логические задачи",
+            getFourthCategoryQuestions().size,
+            1,
+            "brain_logo.png",
+            maxTimestampFourth
+        )
         categories[fourthCategory] = fourthCatQuestions
     }
 
     private fun getFirstCategoryQuestions(): List<Question> {
         val firstCatQuestions = ArrayList<Question>()
         firstCatQuestions.add(
-            createQuestion(0, "Какие бывают модификаторы доступа Java?", fakeAnswer, 100)
+            createQuestion(0, "Какие бывают модификаторы доступа Java?", fakeAnswer)
         )
         firstCatQuestions.add(
-            createQuestion(1, "Как работает Garbage Collector?", fakeAnswer, 110)
+            createQuestion(1, "Как работает Garbage Collector?", fakeAnswer)
         )
         firstCatQuestions.add(
-            createQuestion(2, "Во что компилируются лямбда-выражения?", fakeAnswer, 120)
+            createQuestion(2, "Во что компилируются лямбда-выражения?", fakeAnswer)
         )
         return firstCatQuestions
     }
@@ -189,16 +226,16 @@ class FakeApiImpl private constructor(
     private fun getSecondCategoryQuestions(): List<Question> {
         val secondCatQuestions = ArrayList<Question>()
         secondCatQuestions.add(
-            createQuestion(3, "Что такое Kotlin Extensions?", fakeAnswer + "\n" + fakeAnswer, 130)
+            createQuestion(3, "Что такое Kotlin Extensions?", fakeAnswer + "\n" + fakeAnswer)
         )
         secondCatQuestions.add(
-            createQuestion(4, "Чем отличаются Mutable коллекции от Immutable?", fakeAnswer, 140)
+            createQuestion(4, "Чем отличаются Mutable коллекции от Immutable?", fakeAnswer)
         )
         secondCatQuestions.add(
-            createQuestion(5, "Зачем нужен companion object?", fakeAnswer, 150)
+            createQuestion(5, "Зачем нужен companion object?", fakeAnswer)
         )
         secondCatQuestions.add(
-            createQuestion(6, "Как обозначается функция, бросающая исключение?", fakeAnswer, 160)
+            createQuestion(6, "Как обозначается функция, бросающая исключение?", fakeAnswer)
         )
         return secondCatQuestions
     }
@@ -206,7 +243,7 @@ class FakeApiImpl private constructor(
     private fun getThirdCategoryQuestions(): List<Question> {
         val thirdCatQuestions = ArrayList<Question>()
         thirdCatQuestions.add(
-            createQuestion(7, "Что такое Activity?", fakeAnswer, 170)
+            createQuestion(7, "Что такое Activity?", fakeAnswer)
         )
         return thirdCatQuestions
     }
@@ -214,21 +251,48 @@ class FakeApiImpl private constructor(
     private fun getFourthCategoryQuestions(): List<Question> {
         val fourthCatQuestions = ArrayList<Question>()
         fourthCatQuestions.add(
-            createQuestion(8, "Как решается задача ханойской башни?", fakeAnswer, 170)
+            createQuestion(8, "Как решается задача ханойской башни?", fakeAnswer)
         )
         return fourthCatQuestions
     }
 
-    private fun createQuestion(id: Int, question: String, answer: String, rating: Int) = Question(
-        id, question, answer, rating
+    private fun createCategory(
+        id: Int,
+        name: String,
+        quantity: Int,
+        priority: Int,
+        logoPath: String,
+        lastQuestionTimestamp: Long
+    ) = Category(
+        id = id,
+        name = name,
+        quantity = quantity,
+        priority = priority,
+        logoPath = logoPath,
+        lastQuestionTimestamp = lastQuestionTimestamp
     )
+
+    private fun createQuestion(id: Int, question: String, answer: String) = Question(
+        id, question, answer, (0..1000).random(), getQuestionRandomTimeStamp()
+    )
+
+    private fun getQuestionRandomTimeStamp(): Long {
+        return Calendar.getInstance().apply {
+            set(Calendar.YEAR, (2018..2020).random())
+            set(Calendar.MONTH, (0..11).random())
+            set(Calendar.DAY_OF_MONTH, (1..28).random())
+            set(Calendar.HOUR_OF_DAY, (0..24).random())
+            set(Calendar.MINUTE, (0..60).random())
+        }.timeInMillis / 1000
+    }
 
     private data class Category(
         val id: Int?,
         val name: String?,
         val quantity: Int?,
         val priority: Int?,
-        val logoPath: String?
+        val logoPath: String?,
+        val lastQuestionTimestamp: Long?
     )
 
     private fun Category.toCategoryItemSrc() = CategoryResponse.CategoryItemSrc(
@@ -236,14 +300,19 @@ class FakeApiImpl private constructor(
         name = name,
         quantity = quantity,
         priority = priority,
-        logoPath = logoPath
+        logoPath = logoPath,
+        lastQuestionDate = "Последний вопрос добавлен:\n${parseTimestampToDate(lastQuestionTimestamp ?: 0)}"
     )
+
+    private fun parseTimestampToDate(timestamp: Long)
+            = SimpleDateFormat("dd-MM-yyyy HH:mm").format(Date(timestamp * 1000))
 
     private data class Question(
         val id: Int,
         val question: String,
         val answer: String,
-        val rating: Int
+        val rating: Int,
+        val timestamp: Long
     )
 
     private fun Question.toQuestionListItemSrc(priority: Int) =
@@ -251,7 +320,8 @@ class FakeApiImpl private constructor(
             id = id,
             name = question,
             priority = priority,
-            rating = rating
+            rating = rating,
+            timestamp = timestamp
         )
 
     data class ApiBuilder(

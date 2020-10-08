@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="5dp"
     android:paddingBottom="10dp"
     android:background="@drawable/shape_rectangle">
@@ -26,6 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Questions: 18"
         android:textSize="15sp"
+        android:layout_marginTop="5dp"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="@id/item_category_name"
         app:layout_constraintEnd_toEndOf="@id/item_category_name"
@@ -39,6 +41,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/item_category_name"
         app:layout_constraintTop_toTopOf="@id/item_category_name"
-        app:layout_constraintBottom_toBottomOf="@id/item_category_size"/>
+        app:layout_constraintBottom_toBottomOf="@id/last_question_date"/>
+
+    <TextView
+        android:id="@+id/last_question_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textColor="@android:color/white"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@id/item_category_name"
+        app:layout_constraintEnd_toEndOf="@id/item_category_name"
+        app:layout_constraintTop_toBottomOf="@id/item_category_size"
+        tools:text="Последний вопрос добавлен: 28.02.2020"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
