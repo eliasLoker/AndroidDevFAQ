@@ -16,14 +16,20 @@ class QuestionViewModelImpl(
 
     override val title = MutableLiveData<String>()
     override val answer = MutableLiveData<String>()
+    //TODO("Попробовать хитро пробрасывать через геттеры и сеттеры поля")
+    private var _title = ""
+    private var _answer = ""
+
 
     override fun onActivityCreated() {
         viewModelScope.launch {
             when (val fetchQuestion = questionInteractor.getQuestion(questionID)) {
                 is ResultWrapper.Success -> {
                     Log.d("QuestionDebug", "Success: ${fetchQuestion.data}")
-                    title.value = fetchQuestion.data.title
-                    answer.value = fetchQuestion.data.answer
+                    _title = fetchQuestion.data.title
+                    _answer = fetchQuestion.data.answer
+                    title.value = _title
+                    answer.value = _answer
                 }
 
                 is ResultWrapper.Error -> {
@@ -31,5 +37,9 @@ class QuestionViewModelImpl(
                 }
             }
         }
+    }
+
+    override fun onAddFavouriteButtonClicked() {
+        questionInteractor.addToFavouritesQuestion(questionID,_title, _answer)
     }
 }

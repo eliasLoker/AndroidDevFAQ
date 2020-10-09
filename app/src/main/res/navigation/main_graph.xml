@@ -59,7 +59,9 @@
             app:destination="@id/addQuestionFragment2" />
         <action
             android:id="@+id/action_questionListFragment2_to_questionFragment"
-            app:destination="@id/questionFragment" />
+            app:destination="@id/questionFragment"
+            app:enterAnim="@anim/open"
+            app:exitAnim="@anim/close"/>
     </fragment>
     <fragment
         android:id="@+id/addQuestionFragment2"

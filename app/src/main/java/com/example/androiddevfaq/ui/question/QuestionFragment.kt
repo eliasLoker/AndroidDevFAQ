@@ -10,6 +10,7 @@ import com.example.androiddevfaq.ui.question.interactor.QuestionInteractor
 import com.example.androiddevfaq.ui.question.viewmodel.QuestionFactory
 import com.example.androiddevfaq.ui.question.viewmodel.QuestionViewModel
 import com.example.androiddevfaq.ui.question.viewmodel.QuestionViewModelImpl
+import io.realm.Realm
 
 class QuestionFragment(
     layoutID: Int = R.layout.fragment_question
@@ -20,11 +21,17 @@ class QuestionFragment(
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val questionID = arguments?.getInt(TAG_FOR_QUESTION_ID, 0) ?: 0
-        val interactor = QuestionInteractor(App.getApi())
+        val rlm = Realm.getDefaultInstance()
+        val interactor = QuestionInteractor(App.getApi(), rlm)
         val factory = QuestionFactory(questionID, interactor)
         questionViewModel = ViewModelProviders.of(this, factory).get(QuestionViewModelImpl::class.java)
         questionViewModel.onActivityCreated()
         initObservers()
+
+        binding.addFavouritesButton.setOnClickListener {
+            questionViewModel.onAddFavouriteButtonClicked()
+        }
+
     }
 
     private fun initObservers() {

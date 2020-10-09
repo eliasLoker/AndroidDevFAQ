@@ -1,7 +1,10 @@
 package com.example.androiddevfaq.ui.category.adapter
 
 import android.net.Uri
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationUtils
 import com.bumptech.glide.Glide
 import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.ItemCategoryFirstTypeBinding
@@ -48,7 +51,13 @@ class CategoryAdapter(
         categoryHolder.binding.root.setOnClickListener {
             listener.onCategoryClick(position)
         }
+        setAnimation(categoryHolder.itemView)
     }
 
     override fun getItemCount() = categoryList.size
+
+    private fun setAnimation(view: View) {
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.recycler)
+        view.startAnimation(anim)
+    }
 }

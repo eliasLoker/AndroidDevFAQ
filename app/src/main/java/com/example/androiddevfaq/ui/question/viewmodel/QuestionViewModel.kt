@@ -9,4 +9,6 @@ interface QuestionViewModel {
     val answer: LiveData<String>
 
     fun onActivityCreated()
+
+    fun onAddFavouriteButtonClicked()
 }

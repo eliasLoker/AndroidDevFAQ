@@ -42,15 +42,32 @@
         android:id="@+id/answer_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|center_vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:id="@+id/answer"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:text="djsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsddjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\n" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="djsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsddjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsdkhflsdfsdfksddsfdsdsfsdfsd\ndjsfhsd" />
+
+            <Button
+                android:id="@+id/add_favourites_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="В избранное"
+                app:layout_constraintStart_toStartOf="@id/answer"
+                app:layout_constraintEnd_toEndOf="@id/answer"
+                app:layout_constraintTop_toBottomOf="@id/answer"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.core.widget.NestedScrollView>
 
 

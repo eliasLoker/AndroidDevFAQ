@@ -1,6 +1,7 @@
 package com.example.androiddevfaq.utils.mapper
 
 import android.util.Log
+import com.example.androiddevfaq.database.FavouriteQuestion
 import com.example.androiddevfaq.model.CategoryResponse
 import com.example.androiddevfaq.model.QuestionListResponse
 import java.text.SimpleDateFormat
@@ -26,6 +27,12 @@ class AdapterMapper {
         val rating: Int,
         val date: String,
         val timestamp: Long
+    )
+
+    data class FavouriteItemRecycler(
+        val questionID: Int,
+        val title: String,
+        val recyclerType: Int,
     )
 
     companion object {
@@ -67,5 +74,12 @@ class AdapterMapper {
 
         fun parseTimestampToDate(timestamp: Long)
                 = SimpleDateFormat("dd-MM-yyyy HH:mm").format(Date(timestamp * 1000))
+
+        @JvmStatic
+        fun FavouriteQuestion.toFavouriteItemRecycler(recyclerType: Int) = FavouriteItemRecycler(
+            questionID = id,
+            title =  question,
+            recyclerType = recyclerType
+        )
     }
 }

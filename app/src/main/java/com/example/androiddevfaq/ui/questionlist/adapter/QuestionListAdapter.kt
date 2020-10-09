@@ -1,7 +1,10 @@
 package com.example.androiddevfaq.ui.questionlist.adapter
 
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.ItemQuestionListFirstBinding
 import com.example.androiddevfaq.databinding.ItemQuestionListSecondBinding
 import com.example.androiddevfaq.base.BaseAdapter
@@ -15,7 +18,6 @@ class QuestionListAdapter(
 
     fun setData(newList: List<AdapterMapper.QuestionItemRecycler>) {
         questionList = newList
-        Log.d("ActionDebug", "RV: $newList")
         notifyDataSetChanged()
     }
 
@@ -38,9 +40,15 @@ class QuestionListAdapter(
         holder.itemView.setOnClickListener {
             questionListListener.onClick(position)
         }
+        setAnimation(holder.itemView)
     }
 
     override fun getItemCount() = questionList.size
 
     override fun getItemViewType(position: Int) = questionList[position].recyclerType
+
+    private fun setAnimation(view: View) {
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.recycler)
+        view.startAnimation(anim)
+    }
 }

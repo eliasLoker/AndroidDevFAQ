@@ -20,7 +20,7 @@ class MainTmpFragment(
 
         binding.goToFavourites.setOnClickListener {
 //            findNavController().navigate(R.id.action_mainTmpFragment_to_addQuestionFragment)
-            navigate(R.id.action_mainTmpFragment_to_addQuestionFragment)
+            navigate(R.id.favouritesFragment)
         }
     }
 }
