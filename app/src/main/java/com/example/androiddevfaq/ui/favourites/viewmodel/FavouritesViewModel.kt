@@ -3,7 +3,10 @@ package com.example.androiddevfaq.ui.favourites.viewmodel
 import com.example.androiddevfaq.base.BaseAction
 import com.example.androiddevfaq.base.BaseViewModel
 import com.example.androiddevfaq.base.BaseViewState
+import com.example.androiddevfaq.ui.favourites.adapter.FavouritesAdapterListener
+import com.example.androiddevfaq.ui.favourites.events.FavouritesNavigationEvents
 import com.example.androiddevfaq.ui.favourites.interactor.FavouritesInteractor
+import com.example.androiddevfaq.utils.SingleLiveEvent
 import com.example.androiddevfaq.utils.mapper.AdapterMapper
 import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.getRecyclerType
 import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.toFavouriteItemRecycler
@@ -11,7 +14,10 @@ import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.toFavourit
 class FavouritesViewModel(
     private val title: String,
     private val favouritesInteractor: FavouritesInteractor
-) : BaseViewModel<FavouritesViewModel.ViewState, FavouritesViewModel.Action>(ViewState()) {
+) : BaseViewModel<FavouritesViewModel.ViewState, FavouritesViewModel.Action>(ViewState()),
+    FavouritesAdapterListener {
+
+    val navigationEvents = SingleLiveEvent<FavouritesNavigationEvents>()
 
     private val favouritesItems = ArrayList<AdapterMapper.FavouriteItemRecycler>()
 
@@ -22,11 +28,16 @@ class FavouritesViewModel(
     }
 
     private fun getFavourites() {
+        favouritesItems.clear()
         val favourites = favouritesInteractor.getFavourites()
         favourites.forEachIndexed { index, favouriteQuestion ->
             favouritesItems.add(favouriteQuestion.toFavouriteItemRecycler(getRecyclerType(index)))
         }
         sendAction(Action.SuccessNotEmpty(favouritesItems))
+    }
+
+    override fun onClick(position: Int) {
+        navigationEvents.value = FavouritesNavigationEvents.GoToQuestion(favouritesItems[position].questionID)
     }
 
     override fun onReduceState(viewAction: Action) = when (viewAction) {

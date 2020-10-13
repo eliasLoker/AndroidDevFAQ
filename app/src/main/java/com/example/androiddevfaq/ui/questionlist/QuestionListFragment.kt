@@ -5,7 +5,6 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androiddevfaq.App
 import com.example.androiddevfaq.R
@@ -95,8 +94,12 @@ class QuestionListFragment(
     }
 
     private fun goToQuestion(questionID: Int) {
-        val bundle = QuestionFragment.getBundle(questionID)
-        findNavController().navigate(R.id.action_questionListFragment2_to_questionFragment, bundle)
+//        val bundle = QuestionFragmentOld.getBundle(questionID)
+//        findNavController().navigate(R.id.action_questionListFragment2_to_questionFragment, bundle)
+        navigate(
+            R.id.action_questionListFragment2_to_questionFragment2,
+            QuestionFragment.getBundle(questionID)
+        )
     }
 
     private fun goToAddQuestion(categoryID: Int, categoryName: String) {

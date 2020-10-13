@@ -31,4 +31,15 @@ class QuestionInteractor(
             }
         }
     }
+
+    fun getPairQuestion(questionID: Int) : Pair<String, String> {
+        val favouriteQuestion = realm
+            .where(FavouriteQuestion::class.java)
+            .equalTo("id", questionID)
+            .findFirst()
+        favouriteQuestion?.let {
+            return Pair(it.question, it.answer)
+        }
+        return Pair("", "")
+    }
 }

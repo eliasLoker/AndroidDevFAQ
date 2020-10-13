@@ -9,10 +9,13 @@ import com.example.androiddevfaq.R
 import com.example.androiddevfaq.databinding.FragmentFavouritesBinding
 import com.example.androiddevfaq.base.BaseFragment
 import com.example.androiddevfaq.base.observe
-import com.example.androiddevfaq.ui.favourites.adapter.FavouriteAdapter
+import com.example.androiddevfaq.ui.favourites.adapter.FavouritesAdapter
+import com.example.androiddevfaq.ui.favourites.events.FavouritesNavigationEvents
 import com.example.androiddevfaq.ui.favourites.interactor.FavouritesInteractor
 import com.example.androiddevfaq.ui.favourites.viewmodel.FavouritesFactory
 import com.example.androiddevfaq.ui.favourites.viewmodel.FavouritesViewModel
+import com.example.androiddevfaq.ui.question.QuestionFragment
+import com.example.androiddevfaq.utils.navigate
 import io.realm.Realm
 
 class FavouritesFragment(
@@ -20,7 +23,7 @@ class FavouritesFragment(
 ) : BaseFragment<FragmentFavouritesBinding>(layoutID, FragmentFavouritesBinding::inflate) {
 
     private lateinit var favouritesViewModel: FavouritesViewModel
-    private lateinit var favouritesAdapter: FavouriteAdapter
+    private lateinit var favouritesAdapter: FavouritesAdapter
 
     private val stateObserver = Observer<FavouritesViewModel.ViewState> {
         binding.apply {
@@ -29,7 +32,8 @@ class FavouritesFragment(
             toolbar.toolbar.apply {
                 title = it.title
             }
-            favouritesAdapter.setData(it.list)
+//            favouritesAdapter.setData(it.list)
+            favouritesAdapter.data = it.list
         }
     }
 
@@ -46,9 +50,19 @@ class FavouritesFragment(
         favouritesViewModel.onActivityCreated(savedInstanceState == null)
 
         binding.recycler.apply {
-            favouritesAdapter = FavouriteAdapter()
+            favouritesAdapter = FavouritesAdapter(favouritesViewModel)
             layoutManager = LinearLayoutManager(context)
             adapter = favouritesAdapter
         }
+
+        favouritesViewModel.navigationEvents.observe(viewLifecycleOwner, {
+            when(it) {
+                is FavouritesNavigationEvents.GoToQuestion
+                -> navigate(
+                    R.id.action_favouritesFragment_to_questionFragment2,
+                    QuestionFragment.getBundleFromDatabase(it.questionID)
+                )
+            }
+        })
     }
 }

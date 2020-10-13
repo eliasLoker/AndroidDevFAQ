@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/questionFragment"
-        android:name="com.example.androiddevfaq.ui.question.QuestionFragment"
+        android:name="com.example.androiddevfaq.ui.question.QuestionFragmentOld"
         android:label="fragment_question"
         tools:layout="@layout/fragment_question" />
     <fragment
@@ -34,7 +34,11 @@
         android:id="@+id/favouritesFragment"
         android:name="com.example.androiddevfaq.ui.favourites.FavouritesFragment"
         android:label="fragment_favourites"
-        tools:layout="@layout/fragment_favourites" />
+        tools:layout="@layout/fragment_favourites" >
+        <action
+            android:id="@+id/action_favouritesFragment_to_questionFragment2"
+            app:destination="@id/questionFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/addQuestionFragment"
         android:name="com.example.androiddevfaq.ui.test.TestFragment"
@@ -62,10 +66,19 @@
             app:destination="@id/questionFragment"
             app:enterAnim="@anim/open"
             app:exitAnim="@anim/close"/>
+        <action
+            android:id="@+id/action_questionListFragment2_to_questionFragment2"
+            app:destination="@id/questionFragment2"
+            app:enterAnim="@anim/open"
+            app:exitAnim="@anim/close"/>
     </fragment>
     <fragment
         android:id="@+id/addQuestionFragment2"
         android:name="com.example.androiddevfaq.ui.addquestion.AddQuestionFragment"
         android:label="AddQuestionFragment"
         tools:layout="@layout/fragment_add_question"/>
+    <fragment
+        android:id="@+id/questionFragment2"
+        android:name="com.example.androiddevfaq.ui.question.QuestionFragment"
+        android:label="QuestionFragment" />
 </navigation>
