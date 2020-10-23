@@ -19,7 +19,7 @@ abstract class BaseViewModel<ViewState : BaseViewState, ViewAction : BaseAction>
         }
     }
 
-    fun sendAction(viewAction: ViewAction) {
+    protected fun sendAction(viewAction: ViewAction) {
         state = onReduceState(viewAction)
     }
 

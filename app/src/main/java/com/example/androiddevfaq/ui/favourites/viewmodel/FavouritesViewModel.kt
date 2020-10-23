@@ -1,15 +1,15 @@
 package com.example.androiddevfaq.ui.favourites.viewmodel
 
+import android.util.Log
 import com.example.androiddevfaq.base.BaseAction
 import com.example.androiddevfaq.base.BaseViewModel
 import com.example.androiddevfaq.base.BaseViewState
 import com.example.androiddevfaq.ui.favourites.adapter.FavouritesAdapterListener
 import com.example.androiddevfaq.ui.favourites.events.FavouritesNavigationEvents
 import com.example.androiddevfaq.ui.favourites.interactor.FavouritesInteractor
+import com.example.androiddevfaq.ui.favourites.model.FavouriteItem
+import com.example.androiddevfaq.ui.favourites.model.FavouriteItem.Companion.toFavouriteItemDst
 import com.example.androiddevfaq.utils.SingleLiveEvent
-import com.example.androiddevfaq.utils.mapper.AdapterMapper
-import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.getRecyclerType
-import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.toFavouriteItemRecycler
 
 class FavouritesViewModel(
     private val title: String,
@@ -19,21 +19,23 @@ class FavouritesViewModel(
 
     val navigationEvents = SingleLiveEvent<FavouritesNavigationEvents>()
 
-    private val favouritesItems = ArrayList<AdapterMapper.FavouriteItemRecycler>()
+    private val favouritesItems = ArrayList<FavouriteItem.FavouriteItemDst>()
 
     override fun onActivityCreated(isFirstLoading: Boolean) {
-        sendAction(Action.SetToolbar(title))
-//        sendAction(Action.SuccessNotEmpty(emptyList()))
-        getFavourites()
+        fetchFavourites()
     }
 
-    private fun getFavourites() {
+    private fun fetchFavourites() {
+        sendAction(Action.Loading)
         favouritesItems.clear()
         val favourites = favouritesInteractor.getFavourites()
         favourites.forEachIndexed { index, favouriteQuestion ->
-            favouritesItems.add(favouriteQuestion.toFavouriteItemRecycler(getRecyclerType(index)))
+            favouritesItems.add(favouriteQuestion.toFavouriteItemDst(FavouriteItem.getRecyclerType(index)))
         }
-        sendAction(Action.SuccessNotEmpty(favouritesItems))
+        when(favouritesItems.isEmpty()) {
+            true -> sendAction(Action.SuccessEmpty)
+            false -> sendAction(Action.SuccessNotEmpty(favouritesItems))
+        }
     }
 
     override fun onClick(position: Int) {
@@ -41,10 +43,8 @@ class FavouritesViewModel(
     }
 
     override fun onReduceState(viewAction: Action) = when (viewAction) {
-        is Action.SetToolbar -> state.copy(
-            title = viewAction.title
-        )
         is Action.Loading -> state.copy(
+            title = title,
             progressBarVisibility = true,
             recyclerVisibility = false
         )
@@ -53,25 +53,30 @@ class FavouritesViewModel(
             recyclerVisibility = true,
             list = viewAction.list
         )
+
+        is Action.SuccessEmpty -> state.copy(
+            progressBarVisibility = false,
+            recyclerVisibility = false,
+            emptyListTextViewVisibility = true
+        )
     }
 
     data class ViewState(
         val title: String = "",
         val progressBarVisibility: Boolean = true,
         val recyclerVisibility: Boolean = false,
-        val list: List<AdapterMapper.FavouriteItemRecycler> = emptyList()
+        val list: List<FavouriteItem.FavouriteItemDst> = emptyList(),
+        val emptyListTextViewVisibility: Boolean = false
     ) : BaseViewState
 
     sealed class Action : BaseAction {
 
-        class SetToolbar(
-            val title: String
-        ) : Action()
-
         object Loading : Action()
 
         class SuccessNotEmpty(
-            val list: List<AdapterMapper.FavouriteItemRecycler>
+            val list: List<FavouriteItem.FavouriteItemDst>
         ) : Action()
+
+        object SuccessEmpty : Action()
     }
 }

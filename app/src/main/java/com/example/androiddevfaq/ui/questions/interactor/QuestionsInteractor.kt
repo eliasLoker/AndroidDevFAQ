@@ -1,20 +1,19 @@
-package com.example.androiddevfaq.ui.category.interactor
+package com.example.androiddevfaq.ui.questions.interactor
 
 import com.example.androiddevfaq.api.Api
 import com.example.androiddevfaq.model.ResponseSrc
 import com.example.androiddevfaq.utils.ResultWrapper
-import java.text.ParseException
+import java.lang.Exception
 
-class CategoryInteractor(
+class QuestionsInteractor(
     private val api: Api
 ) {
 
-    suspend fun getCategories(): ResultWrapper<ResponseSrc.CategorySrc> {
+    suspend fun getQuestionsList(categoryID: Int) : ResultWrapper<ResponseSrc.QuestionListSrc> {
         return try {
-            ResultWrapper.Success(api.getCategories())
+            ResultWrapper.Success(api.getQuestionListByID(categoryID))
         } catch (e: Exception) {
             ResultWrapper.Error(e)
         }
     }
-
 }

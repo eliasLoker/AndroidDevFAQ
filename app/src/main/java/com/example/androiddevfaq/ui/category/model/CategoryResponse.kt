@@ -1,7 +1,7 @@
-package com.example.androiddevfaq.model
+package com.example.androiddevfaq.ui.category.model
 
 class CategoryResponse {
-
+//TODO("Delete class")
     data class CategoryItemSrc(
         val id: Int?,
         val name: String?,

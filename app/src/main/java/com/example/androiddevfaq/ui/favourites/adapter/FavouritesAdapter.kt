@@ -7,14 +7,14 @@ import com.example.androiddevfaq.R
 import com.example.androiddevfaq.base.BaseAdapter
 import com.example.androiddevfaq.databinding.ItemFavouritesFirstBinding
 import com.example.androiddevfaq.databinding.ItemFavouritesSecondBinding
-import com.example.androiddevfaq.utils.mapper.AdapterMapper
+import com.example.androiddevfaq.ui.favourites.model.FavouriteItem
 
 class FavouritesAdapter(
     private val favouritesAdapterListener: FavouritesAdapterListener
 ) : BaseAdapter<FavouritesHolders.BaseFavouritesHolder>() {
 
     //    private var data = listOf<AdapterMapper.FavouriteItemRecycler>()
-    var data = listOf<AdapterMapper.FavouriteItemRecycler>()
+    var data = listOf<FavouriteItem.FavouriteItemDst>()
         set(value) {
             field = value
             notifyDataSetChanged()

@@ -24,22 +24,25 @@ class AddQuestionFragment(
     private lateinit var addQuestionViewModel: AddQuestionViewModel
 
     private val stateObserver = Observer<AddQuestionViewModel.ViewState> {
-        binding.answerInputLayout.isVisible = it.answerEditTextVisibility
-        binding.questionInputLayout.isVisible = it.questionEditTextVisibility
-        binding.sendQuestionButton.isVisible = it.sendQuestionButtonVisibility
-        binding.progressBar.isVisible = it.progressBarVisibility
-        binding.createQuestionToolbar.toolbar.apply {
-            title = "Добавить вопрос"
-            subtitle = it.subtitleText
+        binding.apply {
+            progressBar.isVisible = it.progressBarVisibility
+            answerInputLayout.isVisible = it.answerEditTextVisibility
+            questionInputLayout.isVisible = it.questionEditTextVisibility
+            sendQuestionButton.isVisible = it.sendQuestionButtonVisibility
+            createQuestionToolbar.toolbar.apply {
+                title = it.titleText
+                subtitle = it.subtitleText
+            }
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        val title = requireContext().resources.getString(R.string.add_answer_title)
         val interactor = AddQuestionInteractor(App.getApi())
         val categoryID = arguments?.getInt(TAG_FOR_CATEGORY_ID, 0) ?: 0
         val categoryName = arguments?.getString(TAG_FOR_CATEGORY_NAME, "") ?: ""
-        val factory = AddQuestionFactory(categoryID, categoryName, interactor)
+        val factory = AddQuestionFactory(title, categoryID, categoryName, interactor)
         addQuestionViewModel = ViewModelProviders
             .of(this, factory)
             .get(AddQuestionViewModel::class.java)
@@ -47,7 +50,7 @@ class AddQuestionFragment(
         initListeners()
         addQuestionViewModel.onActivityCreated(savedInstanceState == null)
         addQuestionViewModel.navigationEvents.observe(viewLifecycleOwner, {
-            when(it) {
+            when (it) {
                 is AddQuestionNavigationEvents.ShowSuccessDialog -> showSuccessDialog(it.message)
                 is AddQuestionNavigationEvents.ShowFailureDialog -> showErrorDialog(it.failureMessage)
                 is AddQuestionNavigationEvents.GoToBack -> popBackStack()
@@ -70,12 +73,16 @@ class AddQuestionFragment(
     }
 
     private fun showSuccessDialog(message: String?) {
-        val finalMessage = message ?: "Вопрос успешно отправлен"
+        val title = requireContext().resources.getString(R.string.add_answer_success_add_title)
+        val finalMessage = message
+            ?: requireContext().resources.getString(R.string.add_answer_success_add)
+        val ok = requireContext().resources.getString(R.string.ok)
+
         val dialog = AlertDialog.Builder(context)
-            .setTitle("Вопрос добавлен!")
+            .setTitle(title)
             .setMessage(finalMessage)
             .setCancelable(false)
-            .setPositiveButton("Ok") { i1, _ ->
+            .setPositiveButton(ok) { i1, _ ->
                 i1.dismiss()
                 addQuestionViewModel.onDialogPositiveButtonsClicked()
             }
@@ -83,12 +90,16 @@ class AddQuestionFragment(
     }
 
     private fun showErrorDialog(message: String?) {
-        val finalMessage = message ?: "Не удалось добавить"
+        val title = requireContext().resources.getString(R.string.add_answer_error_add_title)
+        val finalMessage = message
+            ?: requireContext().resources.getString(R.string.add_answer_error_add_message)
+        val ok = requireContext().resources.getString(R.string.ok)
+
         val dialog = AlertDialog.Builder(context)
-            .setTitle("Вопрос не добавлен!")
+            .setTitle(title)
             .setMessage(finalMessage)
             .setCancelable(false)
-            .setPositiveButton("Ok") { i1, _ ->
+            .setPositiveButton(ok) { i1, _ ->
                 i1.dismiss()
                 addQuestionViewModel.onDialogPositiveButtonsClicked()
             }

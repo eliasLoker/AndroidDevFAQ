@@ -4,8 +4,8 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@android:color/holo_green_dark"
+    android:background="@color/colorPrimary"
     android:elevation="4dp"
     app:title="Категории"
     app:titleTextColor="@android:color/white"
-    app:subtitleTextColor="@android:color/darker_gray"/>
+    app:subtitleTextColor="@android:color/white"/>

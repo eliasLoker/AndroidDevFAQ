@@ -15,8 +15,8 @@ class MainViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycl
 
     override fun createFragment(position: Int): Fragment {
         return when(position) {
-            0 -> CategoryFragment.newInstance()
-            else -> CategoryFragment.newInstance()
+            0 -> CategoryFragment()
+            else -> CategoryFragment()
         }
     }
 }

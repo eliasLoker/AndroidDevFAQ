@@ -1,7 +1,6 @@
 package com.example.androiddevfaq.ui.category.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.androiddevfaq.base.BaseAction
 import com.example.androiddevfaq.base.BaseViewModel
@@ -9,27 +8,29 @@ import com.example.androiddevfaq.base.BaseViewState
 import com.example.androiddevfaq.ui.category.adapter.CategoryAdapterListener
 import com.example.androiddevfaq.ui.category.event.CategoryNavigationEvents
 import com.example.androiddevfaq.ui.category.interactor.CategoryInteractor
+import com.example.androiddevfaq.ui.category.model.CategoryItem
+import com.example.androiddevfaq.ui.category.model.CategoryItem.Companion.toCategoryItemDst
 import com.example.androiddevfaq.utils.ResultWrapper
 import com.example.androiddevfaq.utils.SingleLiveEvent
-import com.example.androiddevfaq.utils.mapper.AdapterMapper
-import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.getRecyclerType
-import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.toCategoryItemRecycler
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
+    private val title: String,
+    private val subTitle: String,
     private val categoryInteractor: CategoryInteractor
 ) : BaseViewModel<CategoryViewModel.ViewState, CategoryViewModel.Action>(ViewState()),
     CategoryAdapterListener {
 
-    val initToolbar = MutableLiveData<Any>()
-
     val categoryNavigationEvents = SingleLiveEvent<CategoryNavigationEvents>()
 
-    private var categoryRecycler = ArrayList<AdapterMapper.CategoryItemRecycler>()
+    private var categoryRecycler = ArrayList<CategoryItem.CategoryItemDst>()
+
+    private var sortType = 0
+    //0 - default (priority)
+    //1 -size
 
     override fun onActivityCreated(isFirstLoading: Boolean) {
         if (isFirstLoading) {
-            initToolbar.value = Any()
             requestCategories(false)
         }
     }
@@ -40,20 +41,26 @@ class CategoryViewModel(
         viewModelScope.launch {
             when (val fetchCategory = categoryInteractor.getCategories()) {
                 is ResultWrapper.Success -> {
-                    when (fetchCategory.data.status) {
+                    when (fetchCategory.data.status ?: false) {
                         true -> {
-                            Log.d("CatNewDeb", "Success: ${categoryRecycler.size}")
-                            val category = fetchCategory.data.categoryList
+                            val category = fetchCategory.data.categoryList ?: emptyList()
+                            Log.d("CatDebug", "category: $category")
                             category.forEachIndexed { index, categoryItemSrc ->
                                 categoryRecycler.add(
-                                    categoryItemSrc.toCategoryItemRecycler(
-                                        getRecyclerType(
+                                    categoryItemSrc.toCategoryItemDst(
+                                        CategoryItem.getRecyclerType(
                                             index
                                         )
                                     )
                                 )
                             }
-                            sendAction(Action.Success(categoryRecycler))
+                            Log.d("CatDebug", "WOS: $categoryRecycler")
+                            sortList()
+                            Log.d("CatDebug", "SORT: $categoryRecycler")
+                            when (categoryRecycler.isEmpty()) {
+                                true -> sendAction(Action.SuccessEmpty)
+                                false -> sendAction(Action.SuccessNotEmpty(categoryRecycler))
+                            }
                         }
                         false -> {
                             sendAction(Action.Failure(fetchCategory.data.error))
@@ -67,44 +74,86 @@ class CategoryViewModel(
         }
     }
 
+    private fun sortList() {
+        when (sortType) {
+            0 -> categoryRecycler.sortBy { it.priority }
+            1 -> categoryRecycler.sortByDescending { it.size }
+        }
+    }
+
     override fun onReduceState(viewAction: Action): ViewState {
         return when (viewAction) {
-            is Action.Loading -> when(viewAction.isSwipeRefresh) {
+
+            is Action.Loading -> when (viewAction.isSwipeRefresh) {
                 true -> state.copy(
+                    title = title,
+                    subTitle = subTitle,
                     swipeRefreshVisibility = true,
                     sortSpinnerVisibility = false,
                     categoryRecyclerVisibility = false,
+                    emptyListTextViewVisibility = false,
                     errorTextViewVisibility = false
                 )
                 false -> state.copy(
+                    title = title,
+                    subTitle = subTitle,
                     progressBarVisibility = true,
                     sortSpinnerVisibility = false,
                     categoryRecyclerVisibility = false,
+                    emptyListTextViewVisibility = false,
                     errorTextViewVisibility = false
                 )
             }
 
-            is Action.Success -> state.copy(
+            is Action.SuccessEmpty -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                categoryRecyclerVisibility = false,
+                emptyListTextViewVisibility = true,
+                sortSpinnerVisibility = false
+            )
+
+            is Action.SuccessNotEmpty -> state.copy(
                 progressBarVisibility = false,
                 swipeRefreshVisibility = false,
                 categoryList = viewAction.categoryList,
                 categoryRecyclerVisibility = true,
+                emptyListTextViewVisibility = false,
                 sortSpinnerVisibility = true
             )
-            is Action.Failure -> state
-
-            is Action.Error -> state
 
             is Action.SortList -> state.copy(
                 categoryList = viewAction.categoryList
+            )
+
+            is Action.Failure -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                categoryRecyclerVisibility = false,
+                emptyListTextViewVisibility = false,
+                sortSpinnerVisibility = false,
+                errorTextViewVisibility = true,
+                errorMessage = viewAction.failureMessage
+            )
+
+            is Action.Error -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                categoryRecyclerVisibility = false,
+                emptyListTextViewVisibility = false,
+                sortSpinnerVisibility = false,
+                errorTextViewVisibility = true,
+                errorMessage = null
             )
         }
     }
 
     override fun onCategoryClick(position: Int) {
+        val id = categoryRecycler[position].categoryID ?: return
+        val name = categoryRecycler[position].categoryName ?: return
         val event = CategoryNavigationEvents.GoToQuestionList(
-            categoryRecycler[position].categoryID,
-            categoryRecycler[position].categoryName
+            id,
+            name
         )
         categoryNavigationEvents.value = event
     }
@@ -114,32 +163,47 @@ class CategoryViewModel(
     }
 
     fun onSortSpinnerItemSelected(position: Int) {
-        when (position) {
-            0 -> categoryRecycler.sortBy { it.priority }
-            1 -> categoryRecycler.sortByDescending { it.size }
-        }
+        sortType = position
+        sortList()
+//        when (position) {
+//            0 -> categoryRecycler.sortBy { it.priority }
+//            1 -> categoryRecycler.sortByDescending { it.size }
+//        }
         sendAction(Action.SortList(categoryRecycler))
     }
 
     data class ViewState(
+        val title: String = "",
+        val subTitle: String = "",
         val progressBarVisibility: Boolean = true,
         val swipeRefreshVisibility: Boolean = false,
         val categoryRecyclerVisibility: Boolean = false,
-        val categoryList: List<AdapterMapper.CategoryItemRecycler> = emptyList(),
+        val categoryList: List<CategoryItem.CategoryItemDst> = emptyList(),
+        val emptyListTextViewVisibility: Boolean = false,
         val sortSpinnerVisibility: Boolean = false,
         val errorTextViewVisibility: Boolean = false,
-        val errorMessage: String = ""
+        val errorMessage: String? = ""
     ) : BaseViewState
 
     sealed class Action : BaseAction {
 
-        class Loading(val isSwipeRefresh: Boolean) : Action()
+        class Loading(
+            val isSwipeRefresh: Boolean
+        ) : Action()
 
-        class SortList(val categoryList: List<AdapterMapper.CategoryItemRecycler>) : Action()
+        class SuccessNotEmpty(
+            val categoryList: List<CategoryItem.CategoryItemDst>
+        ) : Action()
 
-        class Success(val categoryList: List<AdapterMapper.CategoryItemRecycler>) : Action()
+        object SuccessEmpty : Action()
 
-        class Failure(val failureMessage: String) : Action()
+        class SortList(
+            val categoryList: List<CategoryItem.CategoryItemDst>
+        ) : Action()
+
+        class Failure(
+            val failureMessage: String?
+        ) : Action()
 
         object Error : Action()
     }

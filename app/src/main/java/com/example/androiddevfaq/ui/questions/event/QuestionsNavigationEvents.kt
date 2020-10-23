@@ -1,4 +1,4 @@
-package com.example.androiddevfaq.ui.questionlist.event
+package com.example.androiddevfaq.ui.questions.event
 
 sealed class QuestionsNavigationEvents {
     class ToQuestion(

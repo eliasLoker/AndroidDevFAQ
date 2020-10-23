@@ -1,33 +1,33 @@
-package com.example.androiddevfaq.ui.questionlist.viewmodel
+package com.example.androiddevfaq.ui.questions.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.androiddevfaq.base.BaseAction
 import com.example.androiddevfaq.base.BaseViewModel
 import com.example.androiddevfaq.base.BaseViewState
-import com.example.androiddevfaq.ui.questionlist.adapter.QuestionListListener
-import com.example.androiddevfaq.ui.questionlist.event.QuestionsNavigationEvents
-import com.example.androiddevfaq.ui.questionlist.interactor.QuestionListInteractor
+import com.example.androiddevfaq.ui.questions.adapter.QuestionsListener
+import com.example.androiddevfaq.ui.questions.event.QuestionsNavigationEvents
+import com.example.androiddevfaq.ui.questions.interactor.QuestionsInteractor
+import com.example.androiddevfaq.ui.questions.model.QuestionsItem
+import com.example.androiddevfaq.ui.questions.model.QuestionsItem.Companion.toQuestionItemRecycler
 import com.example.androiddevfaq.utils.ResultWrapper
 import com.example.androiddevfaq.utils.SingleLiveEvent
-import com.example.androiddevfaq.utils.mapper.AdapterMapper
-import com.example.androiddevfaq.utils.mapper.AdapterMapper.Companion.toQuestionItemRecycler
 import kotlinx.coroutines.launch
 
-class QuestionListViewModel(
+class QuestionsViewModel(
+    private val subTitle: String,
     private val categoryID: Int,
     private val categoryName: String,
-    private val interactor: QuestionListInteractor
-) : BaseViewModel<QuestionListViewModel.ViewState, QuestionListViewModel.Action>(
+    private val interactor: QuestionsInteractor
+) : BaseViewModel<QuestionsViewModel.ViewState, QuestionsViewModel.Action>(
     ViewState()
-), QuestionListListener {
+), QuestionsListener {
 
-    private var questions = ArrayList<AdapterMapper.QuestionItemRecycler>()
+    private var questions = ArrayList<QuestionsItem.QuestionsItemDst>()
 
     val questionsNavigationEvents = SingleLiveEvent<QuestionsNavigationEvents>()
 
     override fun onActivityCreated(isFirstLoading: Boolean) {
         if (isFirstLoading) {
-            sendAction(Action.SetToolbar(categoryName))
             requestQuestions(false)
         }
     }
@@ -40,17 +40,21 @@ class QuestionListViewModel(
                 is ResultWrapper.Success -> {
                     when (fetchQuestions.data.status) {
                         true -> {
-                            val questionsTmp = fetchQuestions.data.questionList
+                            val questionsTmp = fetchQuestions.data.questionList ?: emptyList()
                             questionsTmp.forEachIndexed { index, questionListItemSrc ->
                                 questions.add(
                                     questionListItemSrc.toQuestionItemRecycler(
-                                        AdapterMapper.getRecyclerType(
-                                            index
+                                        QuestionsItem.getRecyclerType(index),
+                                        QuestionsItem.parseTimestampToDate(
+                                            questionListItemSrc.timestamp ?: 0
                                         )
                                     )
                                 )
                             }
-                            sendAction(Action.Success(questions))
+                            when (questions.isEmpty()) {
+                                true -> sendAction(Action.SuccessEmpty)
+                                false -> sendAction(Action.SuccessNotEmpty(questions))
+                            }
                         }
 
                         false -> {
@@ -67,7 +71,8 @@ class QuestionListViewModel(
     }
 
     override fun onClick(position: Int) {
-        val event = QuestionsNavigationEvents.ToQuestion(questions[position].questionID)
+        val questionID = questions[position].questionID ?: return
+        val event = QuestionsNavigationEvents.ToQuestion(questionID)
         questionsNavigationEvents.value = event
     }
 
@@ -90,19 +95,19 @@ class QuestionListViewModel(
 
     override fun onReduceState(viewAction: Action): ViewState {
         return when (viewAction) {
-            is Action.SetToolbar -> state.copy(
-                toolbarTitle = viewAction.toolbarTitle
-            )
-
             is Action.Loading -> {
                 when (viewAction.isSwipeRefresh) {
                     true -> state.copy(
+                        title = categoryName,
+                        subTitle = subTitle,
                         swipeRefreshVisibility = true,
                         sortSpinnerVisibility = false,
                         questionListAdapterVisibility = false,
                         errorTextViewVisibility = false
                     )
                     false -> state.copy(
+                        title = categoryName,
+                        subTitle = subTitle,
                         progressBarVisibility = true,
                         sortSpinnerVisibility = false,
                         questionListAdapterVisibility = false,
@@ -110,43 +115,69 @@ class QuestionListViewModel(
                     )
                 }
             }
-            is Action.Success -> state.copy(
+            is Action.SuccessNotEmpty -> state.copy(
                 progressBarVisibility = false,
                 swipeRefreshVisibility = false,
                 questions = viewAction.questions,
                 questionListAdapterVisibility = true,
-                sortSpinnerVisibility = true
+                sortSpinnerVisibility = true,
+                emptyListTextViewVisibility = false
+            )
+            is Action.SuccessEmpty -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                questionListAdapterVisibility = false,
+                sortSpinnerVisibility = false,
+                emptyListTextViewVisibility = true
             )
             is Action.Sort -> state.copy(
                 questions = viewAction.sortedQuestions
             )
-            is Action.Failure -> state
-            is Action.Error -> state
+            is Action.Failure -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                sortSpinnerVisibility = false,
+                questionListAdapterVisibility = false,
+                emptyListTextViewVisibility = false,
+                errorTextViewVisibility = true,
+                errorMessage = viewAction.failureMessage
+            )
+            is Action.Error -> state.copy(
+                progressBarVisibility = false,
+                swipeRefreshVisibility = false,
+                sortSpinnerVisibility = false,
+                questionListAdapterVisibility = false,
+                emptyListTextViewVisibility = false,
+                errorTextViewVisibility = true,
+                errorMessage = null
+            )
         }
     }
 
     data class ViewState(
-        val toolbarTitle: String = "",
+        val title: String = "",
+        val subTitle: String = "",
         val progressBarVisibility: Boolean = true,
         val swipeRefreshVisibility: Boolean = false,
         val sortSpinnerVisibility: Boolean = false,
         val questionListAdapterVisibility: Boolean = false,
-        val questions: List<AdapterMapper.QuestionItemRecycler> = emptyList(),
+        val questions: List<QuestionsItem.QuestionsItemDst> = emptyList(),
+        val emptyListTextViewVisibility: Boolean = false,
         val errorTextViewVisibility: Boolean = false,
-        val errorMessage: String = ""
+        val errorMessage: String? = ""
     ) : BaseViewState
 
     sealed class Action : BaseAction {
 
-        class SetToolbar(val toolbarTitle: String) : Action()
-
         class Loading(val isSwipeRefresh: Boolean) : Action()
 
-        class Success(val questions: List<AdapterMapper.QuestionItemRecycler>) : Action()
+        class SuccessNotEmpty(val questions: List<QuestionsItem.QuestionsItemDst>) : Action()
 
-        class Sort(val sortedQuestions: List<AdapterMapper.QuestionItemRecycler>) : Action()
+        object SuccessEmpty : Action()
 
-        class Failure(val failureMessage: String) : Action()
+        class Sort(val sortedQuestions: List<QuestionsItem.QuestionsItemDst>) : Action()
+
+        class Failure(val failureMessage: String?) : Action()
 
         object Error : Action()
     }

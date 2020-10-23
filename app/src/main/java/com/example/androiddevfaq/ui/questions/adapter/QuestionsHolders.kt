@@ -1,4 +1,4 @@
-package com.example.androiddevfaq.ui.questionlist.adapter
+package com.example.androiddevfaq.ui.questions.adapter
 
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -6,7 +6,7 @@ import androidx.viewbinding.ViewBinding
 import com.example.androiddevfaq.databinding.ItemQuestionListFirstBinding
 import com.example.androiddevfaq.databinding.ItemQuestionListSecondBinding
 
-class QuestionListHolders {
+class QuestionsHolders {
 
     abstract class BaseQuestionListHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -18,9 +18,9 @@ class QuestionListHolders {
 
 //        abstract fun bind2(questionText: String, rating: Int)
 
-        fun bind(questionText: String, date: String, rating: Int) {
+        fun bind(questionText: String, date: String, rating: String) {
             questionTextView.text = questionText
-            ratingTextView.text = "$rating"
+            ratingTextView.text = rating
             dateTextView.text = date
         }
     }

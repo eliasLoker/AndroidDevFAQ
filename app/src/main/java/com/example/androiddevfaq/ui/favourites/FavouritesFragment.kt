@@ -1,6 +1,7 @@
 package com.example.androiddevfaq.ui.favourites
 
 import android.os.Bundle
+import android.util.Log
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,7 +15,8 @@ import com.example.androiddevfaq.ui.favourites.events.FavouritesNavigationEvents
 import com.example.androiddevfaq.ui.favourites.interactor.FavouritesInteractor
 import com.example.androiddevfaq.ui.favourites.viewmodel.FavouritesFactory
 import com.example.androiddevfaq.ui.favourites.viewmodel.FavouritesViewModel
-import com.example.androiddevfaq.ui.question.QuestionFragment
+import com.example.androiddevfaq.ui.answer.AnswerFragment
+import com.example.androiddevfaq.utils.AdapterItemDecorator
 import com.example.androiddevfaq.utils.navigate
 import io.realm.Realm
 
@@ -32,6 +34,7 @@ class FavouritesFragment(
             toolbar.toolbar.apply {
                 title = it.title
             }
+            emptyTextView.isVisible = it.emptyListTextViewVisibility
 //            favouritesAdapter.setData(it.list)
             favouritesAdapter.data = it.list
         }
@@ -40,7 +43,7 @@ class FavouritesFragment(
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val title = "Избранное"
+        val title = requireContext().resources.getString(R.string.favourites_title)
         val realm = Realm.getDefaultInstance()
         val interactor = FavouritesInteractor(realm)
         val factory = FavouritesFactory(title, interactor)
@@ -53,6 +56,8 @@ class FavouritesFragment(
             favouritesAdapter = FavouritesAdapter(favouritesViewModel)
             layoutManager = LinearLayoutManager(context)
             adapter = favouritesAdapter
+            val margin = requireContext().resources.getDimension(R.dimen.default_adapter_padding).toInt()
+            addItemDecoration(AdapterItemDecorator(margin))
         }
 
         favouritesViewModel.navigationEvents.observe(viewLifecycleOwner, {
@@ -60,7 +65,7 @@ class FavouritesFragment(
                 is FavouritesNavigationEvents.GoToQuestion
                 -> navigate(
                     R.id.action_favouritesFragment_to_questionFragment2,
-                    QuestionFragment.getBundleFromDatabase(it.questionID)
+                    AnswerFragment.getBundleFromDatabase(it.questionID)
                 )
             }
         })

@@ -1,10 +1,8 @@
 package com.example.androiddevfaq.api
 
-import android.util.Log
-import com.example.androiddevfaq.model.CategoryResponse
-import com.example.androiddevfaq.model.QuestionListResponse
 import com.example.androiddevfaq.model.ResponseSrc
-import com.example.androiddevfaq.utils.mapper.AdapterMapper
+import com.example.androiddevfaq.ui.category.model.CategoryItem
+import com.example.androiddevfaq.ui.questions.model.QuestionsItem
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,33 +30,13 @@ class FakeApiImpl private constructor(
             true -> throw NoSuchFieldException("Parsing error")
             false -> {
                 val keys = categories.keys.toMutableList()
-                val categoriesResponse = ArrayList<CategoryResponse.CategoryItemSrc>()
+                val categoriesResponse = ArrayList<CategoryItem.CategoryItemSrc>()
                 for (i in keys) {
                     categoriesResponse.add(i.toCategoryItemSrc())
                 }
                 return ResponseSrc.CategorySrc(true, categoriesResponse, null)
             }
         }
-    }
-
-    private fun test() {
-        val currentCalendar = Calendar.getInstance()
-        val newCalendar = Calendar.getInstance().apply {
-            set(Calendar.YEAR, (2018..2020).random())
-            set(Calendar.MONTH, (0..11).random())
-            set(Calendar.DAY_OF_MONTH, (1..28).random())
-            set(Calendar.HOUR_OF_DAY, (0..24).random())
-            set(Calendar.MINUTE, (0..60).random())
-        }
-        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        Log.d("DateDebug", "Cal: $newCalendar")
-        val userDate = simpleDateFormat.format(newCalendar.time)
-        Log.d("DateDebug", "CalForm: $userDate")
-        Log.d("DateDebug", "Stamp / 1000: ${newCalendar.timeInMillis}")
-        Log.d("DateDebug", "Stamp: ${newCalendar.timeInMillis / 1000}")
-//        val newCalendar = Calendar.getInstance()
-//        newCalendar.set(Calendar.MONTH, (0..11).random())
-//        newCalendar.set(Calendar.DAY_OF_MONTH, (1..28).random())
     }
 
     override suspend fun getQuestionListByID(
@@ -74,7 +52,7 @@ class FakeApiImpl private constructor(
                     if (i.id == categoryID) {
                         val questionListQuestion = categories[i] as ArrayList<Question>
                         val questionListResponse =
-                            ArrayList<QuestionListResponse.QuestionListItemSrc>()
+                            ArrayList<QuestionsItem.QuestionsItemSrc>()
                         questionListQuestion.forEachIndexed { index, question ->
                             questionListResponse.add(question.toQuestionListItemSrc(index))
                         }
@@ -113,7 +91,7 @@ class FakeApiImpl private constructor(
         question: String,
         answer: String,
         isError: Boolean
-    ): ResponseSrc.AddQuestionResponse {
+    ): ResponseSrc.AddQuestionSrc {
         delay(delay ?: 0)
         when (isError) {
             true -> throw NoSuchFieldException("Parsing error")
@@ -135,14 +113,14 @@ class FakeApiImpl private constructor(
                             answer
                         )
                         questionsList.add(questionItem)
-                        return ResponseSrc.AddQuestionResponse(
+                        return ResponseSrc.AddQuestionSrc(
                             true,
                             "Вопрос успешно добавлен",
                             null
                         )
                     }
                 }
-                return ResponseSrc.AddQuestionResponse(false, null, "Не удалось добавить вопрос")
+                return ResponseSrc.AddQuestionSrc(false, null, "Не удалось добавить вопрос")
             }
         }
     }
@@ -295,7 +273,7 @@ class FakeApiImpl private constructor(
         val lastQuestionTimestamp: Long?
     )
 
-    private fun Category.toCategoryItemSrc() = CategoryResponse.CategoryItemSrc(
+    private fun Category.toCategoryItemSrc() = CategoryItem.CategoryItemSrc(
         id = id,
         name = name,
         quantity = quantity,
@@ -304,8 +282,8 @@ class FakeApiImpl private constructor(
         lastQuestionDate = "Последний вопрос добавлен:\n${parseTimestampToDate(lastQuestionTimestamp ?: 0)}"
     )
 
-    private fun parseTimestampToDate(timestamp: Long)
-            = SimpleDateFormat("dd-MM-yyyy HH:mm").format(Date(timestamp * 1000))
+    private fun parseTimestampToDate(timestamp: Long) =
+        SimpleDateFormat("dd-MM-yyyy HH:mm").format(Date(timestamp * 1000))
 
     private data class Question(
         val id: Int,
@@ -316,7 +294,7 @@ class FakeApiImpl private constructor(
     )
 
     private fun Question.toQuestionListItemSrc(priority: Int) =
-        QuestionListResponse.QuestionListItemSrc(
+        QuestionsItem.QuestionsItemSrc(
             id = id,
             name = question,
             priority = priority,

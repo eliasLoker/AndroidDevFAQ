@@ -4,12 +4,12 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@android:color/holo_green_dark"
+    android:background="@color/colorPrimary"
     android:elevation="4dp"
     app:title="AndroidDevFAQ"
     app:subtitle="Добавить вопрос"
     app:titleTextColor="@android:color/white"
-    app:subtitleTextColor="@android:color/secondary_text_dark">
+    app:subtitleTextColor="@android:color/white">
 
     <ImageView
         android:id="@+id/add_question_menu_image_view"

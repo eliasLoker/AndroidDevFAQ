@@ -6,11 +6,6 @@
     app:startDestination="@id/mainTmpFragment">
 
     <fragment
-        android:id="@+id/questionFragment"
-        android:name="com.example.androiddevfaq.ui.question.QuestionFragmentOld"
-        android:label="fragment_question"
-        tools:layout="@layout/fragment_question" />
-    <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.androiddevfaq.ui.main.MainFragment"
         android:label="fragment_main"
@@ -22,13 +17,19 @@
         tools:layout="@layout/fragment_main_tmp" >
         <action
             android:id="@+id/action_mainTmpFragment_to_favouritesFragment"
-            app:destination="@id/favouritesFragment" />
-        <action
-            android:id="@+id/action_mainTmpFragment_to_addQuestionFragment"
-            app:destination="@id/addQuestionFragment" />
+            app:destination="@id/favouritesFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out"/>
+
         <action
             android:id="@+id/action_mainTmpFragment_to_categoryFragmentNew"
-            app:destination="@id/categoryFragmentNew" />
+            app:destination="@id/categoryFragmentNew"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out"/>
     </fragment>
     <fragment
         android:id="@+id/favouritesFragment"
@@ -37,13 +38,11 @@
         tools:layout="@layout/fragment_favourites" >
         <action
             android:id="@+id/action_favouritesFragment_to_questionFragment2"
-            app:destination="@id/questionFragment2" />
+            app:destination="@id/questionFragment2"
+            app:enterAnim="@anim/open"
+            app:exitAnim="@anim/close"/>
     </fragment>
-    <fragment
-        android:id="@+id/addQuestionFragment"
-        android:name="com.example.androiddevfaq.ui.test.TestFragment"
-        android:label="fragment_add_question"
-        tools:layout="@layout/fragment_test" />
+
     <fragment
         android:id="@+id/categoryFragmentNew"
         android:name="com.example.androiddevfaq.ui.category.CategoryFragment"
@@ -51,21 +50,24 @@
         android:label="CategoryFragmentNew" >
         <action
             android:id="@+id/action_categoryFragmentNew_to_questionListFragment2"
-            app:destination="@id/questionListFragment2" />
+            app:destination="@id/questionListFragment2"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out"/>
     </fragment>
     <fragment
         android:id="@+id/questionListFragment2"
-        android:name="com.example.androiddevfaq.ui.questionlist.QuestionListFragment"
+        android:name="com.example.androiddevfaq.ui.questions.QuestionsFragment"
         android:label="QuestionListFragment"
-        tools:layout="@layout/fragment_question_list">
+        tools:layout="@layout/fragment_questions">
         <action
             android:id="@+id/action_questionListFragment2_to_addQuestionFragment2"
-            app:destination="@id/addQuestionFragment2" />
-        <action
-            android:id="@+id/action_questionListFragment2_to_questionFragment"
-            app:destination="@id/questionFragment"
-            app:enterAnim="@anim/open"
-            app:exitAnim="@anim/close"/>
+            app:destination="@id/addQuestionFragment2"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out"/>
         <action
             android:id="@+id/action_questionListFragment2_to_questionFragment2"
             app:destination="@id/questionFragment2"
@@ -79,6 +81,7 @@
         tools:layout="@layout/fragment_add_question"/>
     <fragment
         android:id="@+id/questionFragment2"
-        android:name="com.example.androiddevfaq.ui.question.QuestionFragment"
-        android:label="QuestionFragment" />
+        android:name="com.example.androiddevfaq.ui.answer.AnswerFragment"
+        android:label="QuestionFragment"
+        tools:layout="@layout/fragment_answer"/>
 </navigation>

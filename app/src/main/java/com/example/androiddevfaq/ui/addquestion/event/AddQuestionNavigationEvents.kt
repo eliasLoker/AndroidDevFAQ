@@ -4,7 +4,7 @@ sealed class AddQuestionNavigationEvents {
 
     class ShowSuccessDialog(val message: String?) : AddQuestionNavigationEvents()
 
-    class ShowFailureDialog(val failureMessage: String) : AddQuestionNavigationEvents()
+    class ShowFailureDialog(val failureMessage: String?) : AddQuestionNavigationEvents()
 
     object ShowErrorDialog : AddQuestionNavigationEvents()
 

@@ -23,5 +23,5 @@ interface Api {
         question: String,
         answer: String,
         isError: Boolean = false
-    ) : ResponseSrc.AddQuestionResponse
+    ) : ResponseSrc.AddQuestionSrc
 }

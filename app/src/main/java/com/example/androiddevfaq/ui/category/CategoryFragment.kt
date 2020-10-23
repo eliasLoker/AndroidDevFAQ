@@ -5,7 +5,6 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.androiddevfaq.App
 import com.example.androiddevfaq.R
@@ -17,9 +16,9 @@ import com.example.androiddevfaq.ui.category.event.CategoryNavigationEvents
 import com.example.androiddevfaq.ui.category.interactor.CategoryInteractor
 import com.example.androiddevfaq.ui.category.viewmodel.CategoryFactory
 import com.example.androiddevfaq.ui.category.viewmodel.CategoryViewModel
-import com.example.androiddevfaq.ui.questionlist.QuestionListFragment
+import com.example.androiddevfaq.ui.questions.QuestionsFragment
+import com.example.androiddevfaq.utils.AdapterItemDecorator
 import com.example.androiddevfaq.utils.navigate
-//import com.example.androiddevfaq.ui.questionlist.QuestionListFragmentOld
 import com.example.androiddevfaq.utils.onItemSelected
 
 class CategoryFragment(
@@ -30,31 +29,35 @@ class CategoryFragment(
     private lateinit var categoryAdapter: CategoryAdapter
 
     private val stateObserver = Observer<CategoryViewModel.ViewState> {
-        binding.categoryProgressBar.isVisible = it.progressBarVisibility
-        binding.categoryRecyclerView.isVisible = it.categoryRecyclerVisibility
-        binding.categorySwipeRefreshLayout.isRefreshing = it.swipeRefreshVisibility
-        binding.sortSpinner.isVisible = it.sortSpinnerVisibility
+        binding.apply {
+            mainProgressBar.isVisible = it.progressBarVisibility
+            recyclerView.isVisible = it.categoryRecyclerVisibility
+            swipeRefreshLayout.isRefreshing = it.swipeRefreshVisibility
+            sortSpinner.isVisible = it.sortSpinnerVisibility
+            errorTextView.isVisible = it.errorTextViewVisibility
+            errorTextView.text = it.errorMessage ?: requireContext().getText(R.string.categories_error)
+            emptyTextView.isVisible = it.emptyListTextViewVisibility
+            emptyTextView.text = requireContext().getString(R.string.categories_empty_list)
+            toolbar.toolbar.apply {
+                title = it.title
+                subtitle = it.subTitle
+            }
+        }
         categoryAdapter.setList(it.categoryList)
-        binding.errorTextView.isVisible = it.errorTextViewVisibility
-//        //TODO("Посмотреть, как прикольно сэтить ресайклер в AlbumAdapter")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val title = requireContext().getString(R.string.app_name)
+        val subTitle = requireContext().getString(R.string.category_subtitle)
         val interactor = CategoryInteractor(App.getApi())
-        val factory = CategoryFactory(interactor)
+        val factory = CategoryFactory(title, subTitle, interactor)
         categoryViewModel =
-            ViewModelProviders.of(this, factory).get(CategoryViewModel::class.java)
+            ViewModelProviders.of(this, factory)
+                .get(CategoryViewModel::class.java)
 
         observe(categoryViewModel.stateLiveData, stateObserver)
-
-        categoryViewModel.initToolbar.observe(viewLifecycleOwner, {
-            binding.categoryToolbar.toolbar.apply {
-                title = "AndroidDevFAQ"
-                subtitle = "Категории"
-            }
-        })
 
         categoryViewModel.onActivityCreated(savedInstanceState == null)
 
@@ -67,12 +70,15 @@ class CategoryFragment(
             }
         })
 
-        val layoutManager = LinearLayoutManager(requireContext())
-        binding.categoryRecyclerView.layoutManager = layoutManager
-        categoryAdapter = CategoryAdapter(categoryViewModel)
-        binding.categoryRecyclerView.adapter = categoryAdapter
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            categoryAdapter = CategoryAdapter(categoryViewModel)
+            adapter = categoryAdapter
+            val margin = requireContext().resources.getDimension(R.dimen.default_adapter_padding).toInt()
+            addItemDecoration(AdapterItemDecorator(margin))
+        }
 
-        val sortOptions = arrayOf("По умолчанию", "По кол-ву вопросов")
+        val sortOptions = requireContext().resources.getStringArray(R.array.category_sort_options)
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -81,8 +87,8 @@ class CategoryFragment(
         adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         binding.sortSpinner.adapter = adapter
 
-        binding.categorySwipeRefreshLayout.setOnRefreshListener {
-            binding.categorySwipeRefreshLayout.isRefreshing = true
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = true
             categoryViewModel.onSwipeRefreshLayout()
         }
 
@@ -92,20 +98,9 @@ class CategoryFragment(
     }
 
     private fun goToQuestionList(categoryID: Int, categoryName: String) {
-//        val bundle = QuestionListFragment.getBundle(categoryID, categoryName)
-//        findNavController().navigate(
-//            R.id.action_categoryFragmentNew_to_questionListFragment2,
-//            bundle
-//        )
         navigate(
             R.id.action_categoryFragmentNew_to_questionListFragment2,
-            QuestionListFragment.getBundle(categoryID, categoryName)
+            QuestionsFragment.getBundle(categoryID, categoryName)
         )
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance() = CategoryFragment()
     }
 }

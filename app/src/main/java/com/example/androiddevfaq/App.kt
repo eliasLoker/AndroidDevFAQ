@@ -40,7 +40,7 @@ class App : Application() {
         fun getApi() = when(api) {
                 null -> {
                     api = FakeApiImpl.ApiBuilder()
-                        .setDelay(0)
+                        .setDelay(1000)
                         .build()
                     api!!
                 }

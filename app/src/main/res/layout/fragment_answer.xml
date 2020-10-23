@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.question.QuestionFragmentOld">
+    tools:context=".ui.answer.AnswerFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -75,6 +75,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/error_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:text="@string/categories_empty_list"
+        android:textColor="@android:color/black"
         android:visibility="invisible"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

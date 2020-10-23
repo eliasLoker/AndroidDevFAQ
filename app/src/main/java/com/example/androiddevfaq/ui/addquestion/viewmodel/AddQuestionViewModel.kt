@@ -5,13 +5,13 @@ import com.example.androiddevfaq.base.BaseAction
 import com.example.androiddevfaq.base.BaseViewModel
 import com.example.androiddevfaq.base.BaseViewState
 import com.example.androiddevfaq.ui.addquestion.event.AddQuestionNavigationEvents
-import com.example.androiddevfaq.ui.addquestion.event.ShowAddResultDialogEvents
 import com.example.androiddevfaq.ui.addquestion.interactor.AddQuestionInteractor
 import com.example.androiddevfaq.utils.ResultWrapper
 import com.example.androiddevfaq.utils.SingleLiveEvent
 import kotlinx.coroutines.launch
 
 class AddQuestionViewModel(
+    private val title: String,
     private val categoryID: Int,
     private val categoryName: String,
     private val addQuestionInteractor: AddQuestionInteractor
@@ -25,7 +25,7 @@ class AddQuestionViewModel(
     private var _answer = ""
 
     override fun onActivityCreated(isFirstLoading: Boolean) {
-        sendAction(Action.SetSubtitleToolbar(categoryName))
+//        sendAction(Action.SetSubtitleToolbar(categoryName))
         sendAction(Action.NotLoading)
     }
 
@@ -53,13 +53,13 @@ class AddQuestionViewModel(
                 categoryID, _question, _answer
             )) {
                 is ResultWrapper.Success -> {
-                    when(addQuestion.data.status) {
+                    when(addQuestion.data.status ?: false) {
                         true -> {
                             val event = AddQuestionNavigationEvents.ShowSuccessDialog(addQuestion.data.message)
                             navigationEvents.value = event
                         }
                         false -> {
-                            val event = AddQuestionNavigationEvents.ShowSuccessDialog(addQuestion.data.error)
+                            val event = AddQuestionNavigationEvents.ShowFailureDialog(addQuestion.data.error)
                             navigationEvents.value = event
                         }
                     }
@@ -76,9 +76,6 @@ class AddQuestionViewModel(
     }
 
     override fun onReduceState(viewAction: Action) = when(viewAction) {
-        is Action.SetSubtitleToolbar -> state.copy(
-            subtitleText = viewAction.categoryName
-        )
         is Action.Loading -> state.copy(
             progressBarVisibility = true,
             questionEditTextVisibility = false,
@@ -87,6 +84,8 @@ class AddQuestionViewModel(
         )
 
         is Action.NotLoading -> state.copy(
+            titleText = title,
+            subtitleText = categoryName,
             progressBarVisibility = false,
             questionEditTextVisibility = true,
             answerEditTextVisibility= true,
@@ -95,16 +94,15 @@ class AddQuestionViewModel(
     }
 
     data class ViewState(
+        val titleText: String = "",
+        val subtitleText: String = "",
         val progressBarVisibility: Boolean = true,
         val questionEditTextVisibility: Boolean = false,
         val answerEditTextVisibility: Boolean = false,
-        val sendQuestionButtonVisibility: Boolean = false,
-        val subtitleText: String = ""
+        val sendQuestionButtonVisibility: Boolean = false
     ) : BaseViewState
 
     sealed class Action : BaseAction {
-
-        class SetSubtitleToolbar(val categoryName: String) : Action()
 
         object Loading : Action()
 

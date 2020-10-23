@@ -1,22 +1,19 @@
-package com.example.androiddevfaq.ui.question.interactor
+package com.example.androiddevfaq.ui.answer.interactor
 
-import android.util.Log
 import com.example.androiddevfaq.api.Api
 import com.example.androiddevfaq.database.FavouriteQuestion
+import com.example.androiddevfaq.model.ResponseSrc
 import com.example.androiddevfaq.utils.ResultWrapper
-import com.example.androiddevfaq.utils.mapper.ResponseDstMapper
-import com.example.androiddevfaq.utils.mapper.ResponseDstMapper.Companion.toQuestionDst
 import io.realm.Realm
-import java.lang.Exception
 
-class QuestionInteractor(
+class AnswerInteractor(
     private val api: Api,
     private val realm: Realm
 ) {
 
-    suspend fun getQuestion(questionID: Int) : ResultWrapper<ResponseDstMapper.QuestionDst> {
+    suspend fun getQuestion(questionID: Int): ResultWrapper<ResponseSrc.QuestionSrc> {
         return try {
-            ResultWrapper.Success(api.getQuestion(questionID).toQuestionDst())
+            ResultWrapper.Success(api.getQuestion(questionID))
         } catch (e: Exception) {
             ResultWrapper.Error(e)
         }
@@ -32,7 +29,7 @@ class QuestionInteractor(
         }
     }
 
-    fun getPairQuestion(questionID: Int) : Pair<String, String> {
+    fun getPairQuestion(questionID: Int): Pair<String, String> {
         val favouriteQuestion = realm
             .where(FavouriteQuestion::class.java)
             .equalTo("id", questionID)

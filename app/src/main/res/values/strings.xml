@@ -1,4 +1,75 @@
 <resources>
     <string name="app_name">AndroidDevFAQ</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--
+    GENERAL STRINGS
+    -->
+    <string name="ok">OK</string>
+    <!--
+    GENERAL STRINGS
+    -->
+
+    <!--
+    CATEGORY FRAGMENT
+    -->
+    <string name="categories_empty_list">Отсутствуют доступные категории</string>
+    <string name="categories_error">Ошибка получения списка категорий</string>
+    <string-array name="category_sort_options">
+        <item>По умолчанию</item>
+        <item>По кол-ву вопросов</item>
+    </string-array>
+    <string name="category_subtitle">Категории</string>
+    <string name="category_empty_name">Пустое имя</string>
+    <string name="category_empty_title_size">*</string>
+    <string name="category_empty_last_date">**:**:****</string>
+    <string name="category_questions_quantity">Вопросов в категории: %1$s</string>
+    <!--
+    CATEGORY FRAGMENT
+    -->
+
+    <!--
+    QUESTIONS FRAGMENT
+    -->
+    <string name="question_empty_question">*****</string>
+    <string name="question_empty_rating">0</string>
+    <string name="question_subtitle">Вопросы</string>
+    <string-array name="questions_sort_options">
+        <item>По рейтингу</item>
+        <item>По дате</item>
+    </string-array>
+    <string name="questions_empty_list">Отсутствуют доступные вопросы</string>
+    <string name="questions_error">Ошибка получения вопросов</string>
+    <!--
+    QUESTIONS FRAGMENT
+    -->
+
+    <!--
+    FAVOURITES FRAGMENT
+    -->
+    <string name="favourites_empty_list">Отсутствуют избранные вопросы</string>
+    <string name="favourites_title">Избранное</string>
+    <!--
+    FAVOURITES FRAGMENT
+    -->
+
+    <!--
+    ANSWER FRAGMENT
+    -->
+    <string name="answer_error">Не удалось открыть вопрос</string>
+    <!--
+    ANSWER FRAGMENT
+    -->
+
+    <!--
+    ADD_ANSWER FRAGMENT
+    -->
+    <string name="add_answer_title">Добавить вопрос</string>
+    <string name="add_answer_success_add">Вопрос успешно отправлен!</string>
+    <string name="add_answer_success_add_title">Вопрос отправлен!</string>
+    <string name="add_answer_error_add_title">Ошибка! Вопрос не отправлен!</string>
+    <string name="add_answer_error_add_message">Вопрос не отправлен!</string>
+    <!--
+    ADD_ANSWER FRAGMENT
+    -->
 </resources>
